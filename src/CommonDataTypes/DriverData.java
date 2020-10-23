@@ -1,4 +1,4 @@
 package CommonDataTypes;
 
-public class DriverData {
+abstract public class DriverData {
 }

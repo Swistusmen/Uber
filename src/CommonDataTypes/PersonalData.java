@@ -1,5 +1,5 @@
 package CommonDataTypes;
 
-public class PersonalData {
+abstract public class PersonalData {
 
 }
