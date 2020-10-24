@@ -1,4 +1,5 @@
 package WebServerApplication;
 
-public class Server extends ServerCommunicator {
+public class Server //extends ServerCommunicator
+{
 }
