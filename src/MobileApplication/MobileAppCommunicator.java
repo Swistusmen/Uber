@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class MobileAppCommunicator {
     public static void main(String[] args) {
-        MobileAppCommunicator app= new MobileAppCommunicator("192.168.0.143",1800);
+        MobileAppCommunicator app= new MobileAppCommunicator("Write your own",1800);
 
     }
 
