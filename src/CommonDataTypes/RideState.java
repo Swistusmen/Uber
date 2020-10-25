@@ -1,4 +1,8 @@
 package CommonDataTypes;
 
-public class RideState {
+public enum RideState{
+    Ordered,
+    Unordered,
+    Canceled,
+    Finished
 }
