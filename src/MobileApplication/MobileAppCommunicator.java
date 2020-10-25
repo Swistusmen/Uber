@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 public class MobileAppCommunicator {
     public static void main(String[] args) {
+
         Ride currentRide=new Ride();
         currentRide.state= RideState.Unordered;
         currentRide.price=100;
@@ -19,6 +20,7 @@ public class MobileAppCommunicator {
         MobileAppCommunicator app= new MobileAppCommunicator ();//("192.168.0.143",1800);
         currentRide=app.Run("192.168.0.143",1800,currentRide);
         System.out.println(currentRide.printRide());
+
 
     }
 
