@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class ServerCommunicator {
     public static void main(String[] args) { //this method need to be changed to Run() or something at the end
-        ServerCommunicator a=new ServerCommunicator("192.168.0.255", 1800);
+        ServerCommunicator a=new ServerCommunicator("Write your own", 1800);
 
     }
         Socket sender=null;
@@ -26,7 +26,8 @@ public class ServerCommunicator {
                 server = new ServerSocket(portNumber);
                 listener = server.accept(); //start to listen and do it until connection will be set up
 
-                sender = new Socket(IP, portNumber);//current object creates a socket, which will be used for sending messages
+                sender = new Socket(IP, portNumber);//start sending messages
+
                 inputStream = new DataInputStream(listener.getInputStream());
                 outputStream = new DataOutputStream(sender.getOutputStream());
                 System.out.println("Connection has been set up");
@@ -43,11 +44,11 @@ public class ServerCommunicator {
                     System.out.println(line);
 
                     line=skaner.nextLine();
-                    System.out.println(line);
 
-                    line=skaner.nextLine();
                     outputStream.writeUTF(line);
                     outputStream.flush();
+
+
                 }}catch (Exception e)
                 {
                     System.out.println(e);
