@@ -50,7 +50,7 @@ public class ServerCommunicator {
                 ride=(Ride) deserializationStream.readObject();
                 ride.price+=10;
                 System.out.println(ride.printRide());
-                
+
                 serializationStream.writeObject(ride);
                 serializationStream.flush();
                 System.out.println("Send object");

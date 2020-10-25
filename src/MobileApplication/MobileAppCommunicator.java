@@ -41,18 +41,22 @@ public class MobileAppCommunicator {
 
             sender=new ServerSocket(portNumber);
             listener=sender.accept(); //setting up socket which responds for receivinng messages
+            System.out.println("Hello");
             try {
-                deserializationStream = new ObjectInputStream(listener.getInputStream());
+                //TODO here, the order matters, different order causes, program cannot set connection
                 serializationStream =new ObjectOutputStream(client.getOutputStream());
+                deserializationStream = new ObjectInputStream(listener.getInputStream());
             }catch(Exception e)
             {
                 System.out.println("Error with serialization streams, "+e);
             }
+            System.out.println("Connection has been set up");
         }catch(Exception e)
         {
             System.out.println(e);
         }
         try{
+            System.out.println(rideObject.printRide());
             serializationStream.writeObject(rideObject);
             serializationStream.flush();
             System.out.println("Send object");
