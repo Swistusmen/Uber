@@ -11,9 +11,16 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Scanner;
 
+
 public abstract class MobileAppCommunicator {
+
     //public static void main(String[] args) {
         /*
+=======
+public class MobileAppCommunicator {
+    public static void main(String[] args) {
+
+>>>>>>> 6a370467890ab9dd9f7014391bd46af6e7ec6dc2
         Ride currentRide=new Ride();
         currentRide.state= RideState.Unordered;
         currentRide.price=100;
@@ -21,8 +28,10 @@ public abstract class MobileAppCommunicator {
         MobileAppCommunicator app= new MobileAppCommunicator ();//("192.168.0.143",1800);
         currentRide=app.Run("192.168.0.143",1800,currentRide);
         System.out.println(currentRide.printRide());
+
          */
     //}
+
 
     private ServerSocket sender=null;
     private Socket listener=null;
