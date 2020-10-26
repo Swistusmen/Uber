@@ -1,5 +1,6 @@
 package MobileApplication;
 
+import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
 import CommonDataTypes.RideState;
 
@@ -10,8 +11,9 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Scanner;
 
-public class MobileAppCommunicator {
-    public static void main(String[] args) {
+public abstract class MobileAppCommunicator {
+    //public static void main(String[] args) {
+        /*
         Ride currentRide=new Ride();
         currentRide.state= RideState.Unordered;
         currentRide.price=100;
@@ -19,8 +21,8 @@ public class MobileAppCommunicator {
         MobileAppCommunicator app= new MobileAppCommunicator ();//("192.168.0.143",1800);
         currentRide=app.Run("192.168.0.143",1800,currentRide);
         System.out.println(currentRide.printRide());
-
-    }
+         */
+    //}
 
     private ServerSocket sender=null;
     private Socket listener=null;
@@ -30,7 +32,118 @@ public class MobileAppCommunicator {
     private Scanner skaner= null;
     private ObjectOutputStream serializationStream;
     private ObjectInputStream deserializationStream;
-    private String filePath="Resources/Ride.ser";
+    private String resourcePath="MobileAppResources";
+    private PersonalData pData;
+    private String IP;
+    private int portNumber;
+
+    protected boolean InserPersonalData(PersonalData pData)
+    {
+        try{
+            String fileName=pData+".ser";
+            FileOutputStream fileOutputStream=new FileOutputStream(this.resourcePath+"/"+fileName);
+
+            serializationStream=new ObjectOutputStream(fileOutputStream);
+            serializationStream.writeObject(pData);
+            serializationStream.flush();
+            serializationStream.close();
+
+            return true;
+        }catch(Exception e)
+        {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    protected PersonalData LoadPersonalData(String phoneNumber)
+    {
+        PersonalData pData=null;
+        try{
+            String fileName=phoneNumber+".ser";
+            FileInputStream fileInputStream=new FileInputStream(this.resourcePath+"/"+fileName);
+            deserializationStream=new ObjectInputStream(fileInputStream);
+            deserializationStream.close();
+        }catch(Exception e)
+        {
+            System.out.println(e);
+        }
+        return pData;
+    }
+
+    protected Ride OperateOnRide(Ride ride)
+    {
+        try{
+            serializationStream.writeObject(ride);
+            serializationStream.flush();
+
+            ride=(Ride)deserializationStream.readObject();
+
+        }catch(Exception e)
+        {
+            System.out.println(e);
+        }
+        return ride;
+    }
+
+    protected boolean ConnectWithServer( PersonalData pData)
+    {
+        boolean isConnectionSetUp=false;
+        try{
+            client = new Socket(IP, this.portNumber); //setting up socket which response for sending messages
+
+            sender=new ServerSocket(portNumber);
+            listener=sender.accept(); //setting up socket which responds for receivinng messages
+            System.out.println("Hello");
+            try {
+                //TODO here, the order matters, different order causes, program cannot set connection
+                serializationStream =new ObjectOutputStream(client.getOutputStream());
+                deserializationStream = new ObjectInputStream(listener.getInputStream());
+            }catch(Exception e)
+            {
+                System.out.println("Error with serialization streams, "+e);
+            }
+            System.out.println("Connection has been set up");
+        }catch(Exception e)
+        {
+            System.out.println(e);
+        }
+        try{
+            serializationStream.writeObject(pData);
+            serializationStream.flush();
+        }catch (Exception e)
+        {
+            System.out.println(e);
+        }
+        try{
+            isConnectionSetUp=deserializationStream.readBoolean();
+        }catch (Exception e)
+        {
+            System.out.println(e);
+        }
+        return isConnectionSetUp;
+    }
+
+    protected void Disconnect()
+    {
+        try{
+            deserializationStream.close();
+            serializationStream.close();
+            inputStream.close();
+            outputStream.close();
+            sender.close();
+            listener.close();
+        }catch (Exception e)
+        {
+            System.out.println(e);
+        }
+    }
+
+    public MobileAppCommunicator(String IP, int portNumber)
+    {
+        this.IP=IP;
+        this.portNumber=portNumber;
+    }
 
 
     public Ride Run(String IP, int portNumber, Ride rideObject)
@@ -79,10 +192,13 @@ public class MobileAppCommunicator {
         return ride;
     }
 
+    /*
     public MobileAppCommunicator(){
 
     }
+    */
 
+/*
     public MobileAppCommunicator(String IP, int portNumber)
     {
         try {
@@ -127,4 +243,6 @@ public class MobileAppCommunicator {
             System.out.println(e);
         }
     }
+    */
+
 }

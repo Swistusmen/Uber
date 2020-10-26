@@ -1,5 +1,6 @@
 package WebServerApplication;
 
+import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
 
 import java.io.*;
@@ -8,12 +9,10 @@ import java.net.Socket;
 import java.util.Scanner;
 
 
-public class ServerCommunicator {
-    public static void main(String[] args) { //this method need to be changed to Run() or something at the end
-        ServerCommunicator a=new ServerCommunicator();//("Write your own", 1800);
-        a.Run("Write your own", 1800);
+public abstract class ServerCommunicator {
+        //ServerCommunicator a=new ServerCommunicator();//("Write your own", 1800);
+        //a.Run("Write your own", 1800);
 
-    }
         private Socket sender=null;
         private Socket listener=null;
         private ServerSocket server=null;
@@ -22,11 +21,92 @@ public class ServerCommunicator {
         private Scanner skaner= null;
         private ObjectOutputStream serializationStream;
         private ObjectInputStream deserializationStream;
-        private String filePath="Resources/Ride.ser";
+        private String clientIP;
+        private int portNumber;
 
-        ServerCommunicator()
+        public ServerCommunicator()
         {
 
+        }
+
+        public ServerCommunicator (String clientIP,int portNumber)
+        {
+            this.clientIP=clientIP;
+            this.portNumber=portNumber;
+        }
+
+        protected PersonalData LookForConnection()
+        {
+            PersonalData data=null;
+            try{
+                server = new ServerSocket(portNumber);
+                listener = server.accept(); //start to listen and do it until connection will be set up
+
+                sender = new Socket(this.clientIP, this.portNumber);//start sending messages
+
+                deserializationStream = new ObjectInputStream(listener.getInputStream());
+                serializationStream = new ObjectOutputStream(sender.getOutputStream());
+            }catch (Exception e)
+            {
+                System.out.println(e);
+            }
+            try{
+                data=(PersonalData) deserializationStream.readObject();
+            }catch (Exception e)
+            {
+                System.out.println(e);
+            }
+            return data;
+        }
+
+        protected void Disconnect()
+        {
+            try{
+                serializationStream.writeObject(null);
+
+                deserializationStream.close();
+                serializationStream.close();
+                inputStream.close();
+                outputStream.close();
+                server.close();
+                sender.close();
+                listener.close();
+            }catch(Exception e)
+            {
+                System.out.println(e);
+            }
+        }
+
+        protected void SentConnectionConfirmation(boolean isConfirmed)
+        {
+            try{
+                serializationStream.writeBoolean(isConfirmed);
+            }catch(Exception e)
+            {
+                System.out.println(e);
+            }
+        }
+
+        protected Ride LookForRide()
+        {
+            Ride ride=null;
+            try {
+                ride = (Ride) deserializationStream.readObject();
+            }catch(Exception e)
+            {
+                System.out.println(e);
+            }
+            return ride;
+        }
+
+        protected void SentRideUpdate(Ride ride)
+        {
+            try{
+                serializationStream.writeObject(ride);
+            }catch(Exception e)
+            {
+                System.out.println(e);
+            }
         }
 
         public Ride Run(String IP, int portNumber)
@@ -70,7 +150,7 @@ public class ServerCommunicator {
             }
             return ride;
         }
-
+/*
         public ServerCommunicator(String IP, int portNumber)
         {
             try {
@@ -115,6 +195,5 @@ public class ServerCommunicator {
                     System.out.println(e);
                 }
             }
-
-
+*/
 };
