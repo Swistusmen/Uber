@@ -16,5 +16,29 @@ public class Ride implements Serializable {
         String text=inputAddress+" "+outputAddress+" "+carNumber+" "+phoneDriver+" "+phoneClient+" "+state.toString()+" "+price;
         return text;
     }
+    
+    public String getCarNumber(){
+        return  carNumber;
+    }
+
+    public float getPrice(){
+        return price;
+    }
+
+    public String getClientPhone(){
+        return phoneClient;
+    }
+
+    public String getPhoneDriver(){
+        return phoneDriver;
+    }
+
+    public RideState getState(){
+        return state;
+    }
+
+    public RideState setState(RideState State) {
+
+    }
 }
 
