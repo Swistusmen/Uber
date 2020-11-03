@@ -1,7 +1,9 @@
 package DriverMobileApplication;
 
+import CommonDataTypes.Ride;
+
 public interface DriverOperations {
-  Ride LookForAClient();
+    Ride LookForAClient();
     float CheckWallet();
     boolean AcceptARide();
     boolean ReportDriveHasEnded();
