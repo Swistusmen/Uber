@@ -38,7 +38,7 @@ public class Ride implements Serializable {
     }
 
     public RideState setState(RideState State) {
-
+        return State;
     }
 }
 
