@@ -1,17 +1,13 @@
-package WebServerApplication;
+package WebServerApplication;//package WebServerApplication;
 
 import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
-
-import java.io.File;
 
 public class Server extends ServerCommunicator
 {
     public static void main(String[] args) {
         Server server=new Server("192.160.0.31",1800);
         server.Run();
-
-
     }
 
     public void Run()
