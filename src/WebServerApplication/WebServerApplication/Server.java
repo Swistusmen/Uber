@@ -6,7 +6,7 @@ import CommonDataTypes.Ride;
 public class Server extends ServerCommunicator
 {
     public static void main(String[] args) {
-        Server server=new Server("192.160.0.31",1800);
+        Server server=new Server(args[0],45676);
         server.Run();
     }
 

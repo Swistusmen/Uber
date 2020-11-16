@@ -11,16 +11,12 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Scanner;
 
-
 public abstract class MobileAppCommunicator {
 
-    //public static void main(String[] args) {
         /*
-=======
 public class MobileAppCommunicator {
     public static void main(String[] args) {
 
->>>>>>> 6a370467890ab9dd9f7014391bd46af6e7ec6dc2
         Ride currentRide=new Ride();
         currentRide.state= RideState.Unordered;
         currentRide.price=100;
@@ -50,7 +46,14 @@ public class MobileAppCommunicator {
     {
         try{
             String fileName=pData+".ser";
-            FileOutputStream fileOutputStream=new FileOutputStream(this.resourcePath+"/"+fileName);
+            File plik=new File(fileName);
+            if(!plik.exists())
+            {
+                plik.createNewFile();
+            }
+            System.out.println(pData);
+            FileOutputStream fileOutputStream=new FileOutputStream(plik);
+            System.out.println("AAAA");
 
             serializationStream=new ObjectOutputStream(fileOutputStream);
             serializationStream.writeObject(pData);
