@@ -2,7 +2,7 @@ package CommonDataTypes;
 
 import java.io.Serializable;
 
-abstract public class DriverData extends PersonalData implements Serializable {
+public class DriverData extends PersonalData implements Serializable {
     private String carLicenseID;
     private String licenseID;
 

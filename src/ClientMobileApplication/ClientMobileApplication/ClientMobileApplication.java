@@ -11,7 +11,8 @@ public class ClientMobileApplication extends MobileAppCommunicator {
     private Scanner scanner;
 
     public static void main(String[] args) {
-        ClientMobileApplication app=new ClientMobileApplication();
+
+        ClientMobileApplication app=new ClientMobileApplication(args[0],45678);
         app.Run();
     }
 
