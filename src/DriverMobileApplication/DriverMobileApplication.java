@@ -43,7 +43,7 @@ public class DriverMobileApplication extends MobileAppCommunicator {
         {
             Ride ride=new Ride();
             ride.price=100;
-            ride.phoneDriver=driverData.getTelephoneNumber();
+            ride.phoneClient=driverData.getTelephoneNumber();
             ride.state= RideState.Unordered;
             ride.inputAddress="Czarnowiejska";
             ride.outputAddress="Miodowa";
