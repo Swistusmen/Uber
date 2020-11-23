@@ -19,7 +19,7 @@ RUN mv /root/usr/CommonDataTypes/*.class /root/usr/WebServerApplication
 RUN javac -cp /root/usr/ /root/usr/WebServerApplication/*.java
 
 RUN mv /root/usr/CommonDataTypes/*.class /root/usr/WebServerApplication
-CMD java -cp /root/usr WebServerApplication.Server
+CMD java -cp /root/usr WebServerApplication.Server "192.168.0.31"
 
 #Commands below to create client
 FROM base AS client
@@ -35,7 +35,7 @@ RUN javac -cp /root/usr/ /root/usr/MobileApplication/*.java
 RUN mv /root/usr/MobileApplication/*.class /root/usr/ClientMobileApplication
 
 RUN javac -cp /root/usr/ /root/usr/ClientMobileApplication/*.java
-CMD java -cp /root/usr/ ClientMobileApplication.ClientMobileApplication "a"
+CMD java -cp /root/usr/ ClientMobileApplication.ClientMobileApplication "192.168.0.31"
  
 
 

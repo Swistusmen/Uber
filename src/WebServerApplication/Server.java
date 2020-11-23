@@ -1,3 +1,5 @@
+package WebServerApplication;
+
 import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
 
@@ -25,8 +27,8 @@ public class Server extends WebServerApplication.ServerCommunicator
             }
             else{
                 System.out.println("Already in base");
-                PersonalData temp=DB.GetPersonalData(pData);
-                shouldIDisconnect=(temp==pData?true:false);
+                //PersonalData temp=DB.GetPersonalData(pData);
+                //shouldIDisconnect=(temp==pData?true:false);
             }
             this.SentConnectionConfirmation(!shouldIDisconnect);
             if(shouldIDisconnect==false) //tested
