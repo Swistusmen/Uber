@@ -1,3 +1,5 @@
+package WebServerApplication;
+
 import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
 
@@ -68,8 +70,8 @@ public abstract class ServerCommunicator {
 
                 deserializationStream.close();
                 serializationStream.close();
-                inputStream.close();
-                outputStream.close();
+                //inputStream.close();
+                //outputStream.close();
                 server.close();
                 sender.close();
                 listener.close();

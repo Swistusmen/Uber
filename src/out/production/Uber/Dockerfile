@@ -11,7 +11,7 @@ EXPOSE 45679
 #Commands below to create server
 FROM base AS server
 COPY CommonDataTypes /root/usr
-COPY WebServerApplication /root/usr
+COPY WebServerApplication /root/usr/WebServerApplication
 
 RUN javac /root/usr/CommonDataTypes/*.java 
 RUN mv /root/usr/CommonDataTypes/*.class /root/usr/WebServerApplication
