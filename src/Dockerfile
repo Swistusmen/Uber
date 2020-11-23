@@ -24,8 +24,8 @@ CMD java -cp /root/usr WebServerApplication.Server "192.168.0.31"
 #Commands below to create client
 FROM base AS client
 COPY CommonDataTypes /root/usr
-COPY MobileApplication /root/usr
-COPY ClientMobileApplication /root/usr
+COPY MobileApplication /root/usr/MobileApplication
+COPY ClientMobileApplication /root/usr/ClientMobileApplication
 
 RUN javac /root/usr/CommonDataTypes/*.java
 
