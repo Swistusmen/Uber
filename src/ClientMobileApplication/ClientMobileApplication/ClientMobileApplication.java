@@ -12,7 +12,7 @@ public class ClientMobileApplication extends MobileAppCommunicator {
 
     public static void main(String[] args) {
 
-        ClientMobileApplication app=new ClientMobileApplication(args[0],45678);
+        ClientMobileApplication app=new ClientMobileApplication(args[0],45676);
         app.Run();
     }
 
@@ -34,6 +34,7 @@ public class ClientMobileApplication extends MobileAppCommunicator {
 
         this.InserPersonalData(personalData);
         boolean isConnectionSetUp=this.ConnectWithServer(personalData);
+        System.out.println(isConnectionSetUp);
         if(isConnectionSetUp==true)
         {
             Ride ride=new Ride();
@@ -42,7 +43,7 @@ public class ClientMobileApplication extends MobileAppCommunicator {
             ride.state= RideState.Unordered;
             ride.inputAddress="Czarnowiejska";
             ride.outputAddress="Miodowa";
-            ride=this.OperateOnRide(ride);
+            //ride=this.OperateOnRide(ride);
             System.out.println(ride);
             ride.price+=30;
             ride=this.OperateOnRide(ride);

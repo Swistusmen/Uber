@@ -4,6 +4,7 @@ import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
 import CommonDataTypes.RideState;
 
+import java.awt.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -85,16 +86,25 @@ public class MobileAppCommunicator {
 
     protected Ride OperateOnRide(Ride ride)
     {
+        Ride obj=null;
         try{
+            System.out.println("Operating on ride");
+            serializationStream.flush();
             serializationStream.writeObject(ride);
             serializationStream.flush();
+            System.out.println("Wrote an object");
 
-            ride=(Ride)deserializationStream.readObject();
+            System.out.println(ride.printRide());
 
+            ride = (Ride) deserializationStream.readObject();
+            System.out.println(ride.printRide());
+            System.out.println("Read an object");
         }catch(Exception e)
         {
             System.out.println(e);
+            System.out.println(((OptionalDataException)(e)).length);
         }
+        System.out.println("Operate on ride- end");
         return ride;
     }
 
@@ -102,14 +112,17 @@ public class MobileAppCommunicator {
     {
         boolean isConnectionSetUp=false;
         try{
+            System.out.println("A");
             client = new Socket(IP, this.portNumber); //setting up socket which response for sending messages
-
-            sender=new ServerSocket(portNumber);
+            System.out.println("B");
+            sender=new ServerSocket(portNumber+1);
+            System.out.println("C");
             listener=sender.accept(); //setting up socket which responds for receivinng messages
-            System.out.println("Hello");
+            System.out.println("Connection has been set up");
             try {
                 //TODO here, the order matters, different order causes, program cannot set connection
                 serializationStream =new ObjectOutputStream(client.getOutputStream());
+                serializationStream.flush();
                 deserializationStream = new ObjectInputStream(listener.getInputStream());
             }catch(Exception e)
             {
@@ -122,29 +135,30 @@ public class MobileAppCommunicator {
         }
         try{
             serializationStream.writeObject(pData);
+            System.out.println("Sending initial data");
             serializationStream.flush();
+            System.out.println("waiting for boolean");
+            deserializationStream.readChar(); //TODO this one is very strange, communication is broken without it
+            isConnectionSetUp=(boolean)deserializationStream.readBoolean();
+            System.out.println("Got confirmation");
         }catch (Exception e)
         {
             System.out.println(e);
         }
-        try{
-            isConnectionSetUp=deserializationStream.readBoolean();
-        }catch (Exception e)
-        {
-            System.out.println(e);
-        }
+        System.out.println("Koniec connect with server");
         return isConnectionSetUp;
     }
 
     protected void Disconnect()
     {
         try{
+            System.out.println("A");
             deserializationStream.close();
             serializationStream.close();
-            inputStream.close();
-            outputStream.close();
+            System.out.println("A");
             sender.close();
             listener.close();
+            System.out.println("A");
         }catch (Exception e)
         {
             System.out.println(e);
