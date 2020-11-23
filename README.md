@@ -1,6 +1,6 @@
 # Uber
-Uber implementation- project for design patterns subject /br
-Contributers: https://github.com/rwidzisz and me 
+Uber implementation- project for design patterns subject </br>
+Contributers: https://github.com/rwidzisz and me   
 
 Tech stack: Java, docker, linux, windows
 Project includes: source code, documentation and UML diagrams
