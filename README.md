@@ -19,13 +19,12 @@ Important note is that for now all apps have to be in locall network
 
 ##### b) with dockeriztion
 Building driver, server, client- on example of client  
-'''
+
 -cd Uber/src/  
 -docker build -t ubuntu_client --target client .  
 -docker run -ti ubuntu_client
-'''
 
+##API documentation and description
 
-###API documentation and description
 ##### Client-Server
 ![](Diagrams/Clinet-Server-API.png)
