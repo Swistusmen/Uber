@@ -1,5 +1,3 @@
-package WebServerApplication;//package WebServerApplication;
-
 import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
 
