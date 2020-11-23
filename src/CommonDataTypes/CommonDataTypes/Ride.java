@@ -8,7 +8,7 @@ public class Ride implements Serializable {
     public String carNumber;
     public String phoneDriver;
     public String phoneClient;
-    public RideState state=RideState.Unordered;
+    public RideState state= RideState.Unordered;
     public float price;
 
     public String printRide()
@@ -33,11 +33,11 @@ public class Ride implements Serializable {
         return phoneDriver;
     }
 
-    public RideState getState(){
+    public CommonDataTypes.RideState getState(){
         return state;
     }
 
-    public RideState setState(RideState State) {
+    public CommonDataTypes.RideState setState(CommonDataTypes.RideState State) {
         return State;
     }
 }

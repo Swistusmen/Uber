@@ -42,19 +42,22 @@ public abstract class ServerCommunicator {
                 server = new ServerSocket(portNumber);
                 listener = server.accept(); //start to listen and do it until connection will be set up
 
-                sender = new Socket(this.clientIP, this.portNumber);//start sending messages
-
+                sender = new Socket(this.clientIP, this.portNumber+1);//start sending messages
+                System.out.println("Connection has been set up");
                 deserializationStream = new ObjectInputStream(listener.getInputStream());
                 serializationStream = new ObjectOutputStream(sender.getOutputStream());
+                serializationStream.flush();
             }catch (Exception e)
             {
-                System.out.println(e);
+                //System.out.println(e);
             }
             try{
                 data=(PersonalData) deserializationStream.readObject();
+
+                System.out.println("Message has been received");
             }catch (Exception e)
             {
-                System.out.println(e);
+                //System.out.println(e);
             }
             return data;
         }
@@ -62,6 +65,7 @@ public abstract class ServerCommunicator {
         protected void Disconnect()
         {
             try{
+                System.out.println("Disconnection");
                 serializationStream.writeObject(null);
 
                 deserializationStream.close();
@@ -80,7 +84,16 @@ public abstract class ServerCommunicator {
         protected void SentConnectionConfirmation(boolean isConfirmed)
         {
             try{
-                serializationStream.writeBoolean(isConfirmed);
+                System.out.println("Sending confirmation");
+                System.out.println(isConfirmed);
+                for(int i=0;i<1;i++)
+                {
+                    serializationStream.writeChar('a');
+                    serializationStream.writeBoolean(isConfirmed);
+                }
+                serializationStream.reset();
+
+                System.out.println("Send");
             }catch(Exception e)
             {
                 System.out.println(e);
@@ -89,9 +102,12 @@ public abstract class ServerCommunicator {
 
         protected Ride LookForRide()
         {
+
             Ride ride=null;
             try {
+                System.out.println("Waiting for Ride");
                 ride = (Ride) deserializationStream.readObject();
+                System.out.println("Got it");
             }catch(Exception e)
             {
                 System.out.println(e);
@@ -102,7 +118,16 @@ public abstract class ServerCommunicator {
         protected void SentRideUpdate(Ride ride)
         {
             try{
+                //serializationStream.close();
+                //serializationStream=new ObjectOutputStream(sender.getOutputStream());
+                System.out.println("Writing a ride");
+                serializationStream.flush();
+                System.out.println(ride.printRide());
+
                 serializationStream.writeObject(ride);
+
+
+                System.out.println("Wrote a ride");
             }catch(Exception e)
             {
                 System.out.println(e);

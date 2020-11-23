@@ -17,9 +17,9 @@ public class DataBaseComponent {
         this.resourceDirectory=resourceDirectory;
     }
 
-    private File CheckIfFileExists(String filePath)
+    private File CheckIfFileExists(File file)
     {
-        File file=new File(this.resourceDirectory+"/"+filePath);
+        //File file=new File(this.resourceDirectory+"/"+filePath);
         if(file.exists())
             return file;
         return null;
@@ -27,21 +27,32 @@ public class DataBaseComponent {
 
     public boolean AddPersonalData(PersonalData pData)
     {
+        System.out.println("DataBase component welcomes you");
         String fileName=pData.getAccountNumber()+".ser";
-        File file;
-        if((file=this.CheckIfFileExists(fileName))!=null) //should be changed to exception
+        File file=new File("src/"+this.resourceDirectory+"/"+this.resourceDirectory,fileName);
+        System.out.println(file.getAbsolutePath());
+        //if(file.exists())
+        //    return false;
+        System.out.println("File does not exists, will be created");
+        /*
+        if((file=this.CheckIfFileExists(file))!=null) //should be changed to exception
         {
+            System.out.println("File does not exists");
             return false;
-        }
-        file=new File(this.resourceDirectory+"/"+fileName);
+        }*/
+
+        //file=new File(this.resourceDirectory+"/"+fileName);
         try {
-            file.createNewFile();
+            if(false==file.createNewFile())
+            {
+                System.out.println("Error in creating file");
+            }
         }catch (Exception e)
         {
-            System.out.println(e);
+            System.out.println("Database creating new file: "+ e);
         }
         try {
-            fileOutputStream = new FileOutputStream(this.resourceDirectory + "/" + fileName);
+            fileOutputStream = new FileOutputStream(file.getAbsoluteFile());
             outputStream=new ObjectOutputStream(fileOutputStream);
             outputStream.close();
             fileOutputStream.close();
@@ -49,14 +60,18 @@ public class DataBaseComponent {
         {
             System.out.println(e);
         }
+        System.out.println("Database says bye");
+
         return true;
     }
 
     public PersonalData GetPersonalData(PersonalData pData)
     {
         String fileName=pData.getAccountNumber()+".ser";
-        File file;
-        if((file=this.CheckIfFileExists(resourceDirectory+"/"+fileName))!=null)
+        File file=new File(fileName);
+        //File file;
+        //if((file=this.CheckIfFileExists(resourceDirectory+"/"+fileName))!=null)
+        if((file=this.CheckIfFileExists(file))!=null)
         {
             try {
                 fileInputStream = new FileInputStream(file);
@@ -76,8 +91,8 @@ public class DataBaseComponent {
     public boolean UpdatePersonalData(PersonalData pData)
     {
         String fileName=pData.getAccountNumber()+".ser";
-        File file;
-        if((file=this.CheckIfFileExists(this.resourceDirectory+"/"+fileName))!=null)
+        File file=new File(fileName);
+        if((file=this.CheckIfFileExists(file))!=null)
         {
             try {
                 fileOutputStream = new FileOutputStream(this.resourceDirectory + "/" + fileName);
@@ -96,8 +111,8 @@ public class DataBaseComponent {
     public boolean AddARide(Ride ride)
     {
         String fileName=ride.inputAddress+"_"+ride.phoneClient+".ser";
-        File file;
-        if((file=this.CheckIfFileExists(fileName))!=null) //should be changed to exception
+        File file=new File(fileName);
+        if((file=this.CheckIfFileExists(file))!=null) //should be changed to exception
         {
             return false;
         }
@@ -123,8 +138,8 @@ public class DataBaseComponent {
     public boolean UpdateRide(Ride ride)
     {
         String fileName=ride.inputAddress+"_"+ride.phoneClient+".ser";
-        File file;
-        if((file=this.CheckIfFileExists(this.resourceDirectory+"/"+fileName))!=null)
+        File file=new File(fileName);
+        if((file=this.CheckIfFileExists(file))!=null)
         {
             try {
                 fileOutputStream = new FileOutputStream(this.resourceDirectory + "/" + fileName);
@@ -143,8 +158,8 @@ public class DataBaseComponent {
     public Ride GetRide(Ride ride)
     {
         String fileName=ride.inputAddress+"_"+ride.phoneClient+".ser";
-        File file;
-        if((file=this.CheckIfFileExists(resourceDirectory+"/"+fileName))!=null)
+        File file=new File(fileName);
+        if((file=this.CheckIfFileExists(file))!=null)
         {
             try {
                 fileInputStream = new FileInputStream(file);
@@ -164,8 +179,8 @@ public class DataBaseComponent {
     public Ride DeleteASerializedRide(Ride ride)
     {
         String fileName=ride.inputAddress+"_"+ride.phoneClient+".ser";
-        File file;
-        if((file=this.CheckIfFileExists(this.resourceDirectory+"/"+fileName))!=null)
+        File file=new File(fileName);
+        if((file=this.CheckIfFileExists(file))!=null)
         {
             try{
                 fileInputStream = new FileInputStream(file);
@@ -186,8 +201,8 @@ public class DataBaseComponent {
     public PersonalData DeleteASerializedPersonalData(PersonalData pData)
     {
         String fileName=pData.getAccountNumber()+".ser";
-        File file;
-        if((file=this.CheckIfFileExists(this.resourceDirectory+"/"+fileName))!=null)
+        File file=new File(fileName);
+        if((file=this.CheckIfFileExists(file))!=null)
         {
             try{
                 fileInputStream = new FileInputStream(file);

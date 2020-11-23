@@ -1,6 +1,8 @@
 package CommonDataTypes;
 
-public enum RideState{
+import java.io.Serializable;
+
+public enum RideState implements Serializable {
     Ordered,
     Unordered,
     Canceled,
