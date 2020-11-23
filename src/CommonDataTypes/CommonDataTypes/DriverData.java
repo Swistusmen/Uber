@@ -11,6 +11,10 @@ public class DriverData extends PersonalData implements Serializable {
         this.carLicenseID=carLicenseID;
         this.licenseID=licenseID;
     }
+    
+    public DriverData() {
+
+    }
 
     public String getCarLicenseID() {
         return carLicenseID;
