@@ -4,6 +4,9 @@ import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DataBaseComponent {
     private String resourceDirectory;
@@ -11,10 +14,12 @@ public class DataBaseComponent {
     private ObjectInputStream inputStream;
     private FileOutputStream fileOutputStream;
     private FileInputStream fileInputStream;
+    List<PersonalData> personalData;
 
     DataBaseComponent(String resourceDirectory)
     {
         this.resourceDirectory=resourceDirectory;
+        this.personalData=new LinkedList<PersonalData>();
     }
 
     private File CheckIfFileExists(File file)
@@ -28,41 +33,21 @@ public class DataBaseComponent {
     public boolean AddPersonalData(PersonalData pData)
     {
         System.out.println("DataBase component welcomes you");
-        String fileName=pData.getAccountNumber()+".ser";
-        File file=new File("src/"+this.resourceDirectory+"/"+this.resourceDirectory,fileName);
-        System.out.println(file.getAbsolutePath());
-        //if(file.exists())
-        //    return false;
-        System.out.println("File does not exists, will be created");
-        /*
-        if((file=this.CheckIfFileExists(file))!=null) //should be changed to exception
-        {
-            System.out.println("File does not exists");
-            return false;
-        }*/
+        if(true==checkIfDataAreInDB(pData))
+            return true;
+        personalData.add(pData);
+        return false;
+    }
 
-        //file=new File(this.resourceDirectory+"/"+fileName);
-        try {
-            if(false==file.createNewFile())
-            {
-                System.out.println("Error in creating file");
-            }
-        }catch (Exception e)
+    public boolean checkIfDataAreInDB(PersonalData pData)
+    {
+        List<Integer> indexes=new ArrayList<Integer>();
+        for(PersonalData p:personalData)
         {
-            System.out.println("Database creating new file: "+ e);
+            if(pData.equals(p))
+                return true;
         }
-        try {
-            fileOutputStream = new FileOutputStream(file.getAbsoluteFile());
-            outputStream=new ObjectOutputStream(fileOutputStream);
-            outputStream.close();
-            fileOutputStream.close();
-        }catch(Exception e)
-        {
-            System.out.println(e);
-        }
-        System.out.println("Database says bye");
-
-        return true;
+        return false;
     }
 
     public PersonalData GetPersonalData(PersonalData pData)

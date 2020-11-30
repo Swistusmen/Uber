@@ -22,8 +22,7 @@ public class Server extends WebServerApplication.ServerCommunicator
             if(pData.isWantToSignUp()==true) //tested
             {
                 System.out.println("Want to sign up");
-                //shouldIDisconnect=DB.AddPersonalData(pData);
-                shouldIDisconnect=false;
+                shouldIDisconnect=DB.AddPersonalData(pData);
             }
             else{
                 System.out.println("Already in base");
@@ -44,12 +43,12 @@ public class Server extends WebServerApplication.ServerCommunicator
         }
     }
 
-    private DataBaseComponent DB;
+    private WebServerApplication.DataBaseComponent DB;
 
     Server(String clientIP, int portNumber)
     {
         super(clientIP, portNumber);
-        DB=new DataBaseComponent("WebServerApplication");
+        DB=new WebServerApplication.DataBaseComponent("WebServerApplication");
     }
 
 }

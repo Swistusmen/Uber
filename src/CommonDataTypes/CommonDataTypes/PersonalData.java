@@ -1,6 +1,7 @@
 package CommonDataTypes;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class PersonalData implements Serializable {
     private String name;
@@ -10,6 +11,25 @@ public class PersonalData implements Serializable {
     private float rating;
     private boolean isClient;
     private boolean wantToSignUp;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PersonalData that = (PersonalData) o;
+        return Float.compare(that.rating, rating) == 0 &&
+                isClient == that.isClient &&
+                wantToSignUp == that.wantToSignUp &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(surname, that.surname) &&
+                Objects.equals(accountNumber, that.accountNumber) &&
+                Objects.equals(telephoneNumber, that.telephoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, surname, accountNumber, telephoneNumber, rating, isClient, wantToSignUp);
+    }
 
     public boolean isWantToSignUp() {
         return wantToSignUp;

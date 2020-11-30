@@ -10,7 +10,7 @@ double driver_income;
 double app_tax=0.2,cancel_tax=0.5;
 
     public MoneyOperations()  {    }
-
+    /*
     public void GetClientMoney(Ride ride) throws Exception {
         PriceCalculator price = new PriceCalculator(ride);
         this.client_outcome=price.getPrice();
@@ -33,5 +33,5 @@ double app_tax=0.2,cancel_tax=0.5;
     public double getDriver_income() {
         return driver_income;
     }
-
+    */
 }
