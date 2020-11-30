@@ -15,11 +15,13 @@ public class DataBaseComponent {
     private FileOutputStream fileOutputStream;
     private FileInputStream fileInputStream;
     List<PersonalData> personalData;
+    List<Ride> rides;
 
     DataBaseComponent(String resourceDirectory)
     {
         this.resourceDirectory=resourceDirectory;
         this.personalData=new LinkedList<PersonalData>();
+        rides=new LinkedList<Ride>();
     }
 
     private File CheckIfFileExists(File file)
@@ -93,51 +95,15 @@ public class DataBaseComponent {
         return false;
     }
 
-    public boolean AddARide(Ride ride)
+    public void AddARide(Ride ride)
     {
-        String fileName=ride.inputAddress+"_"+ride.phoneClient+".ser";
-        File file=new File(fileName);
-        if((file=this.CheckIfFileExists(file))!=null) //should be changed to exception
-        {
-            return false;
-        }
-        file=new File(this.resourceDirectory+"/"+fileName);
-        try {
-            file.createNewFile();
-        }catch (Exception e)
-        {
-            System.out.println(e);
-        }
-        try {
-            fileOutputStream = new FileOutputStream(this.resourceDirectory + "/" + fileName);
-            outputStream=new ObjectOutputStream(fileOutputStream);
-            outputStream.close();
-            fileOutputStream.close();
-        }catch(Exception e)
-        {
-            System.out.println(e);
-        }
-        return true;
+        rides.add(ride);
     }
 
-    public boolean UpdateRide(Ride ride)
+    public Ride UpdateRide(Ride ride)
     {
-        String fileName=ride.inputAddress+"_"+ride.phoneClient+".ser";
-        File file=new File(fileName);
-        if((file=this.CheckIfFileExists(file))!=null)
-        {
-            try {
-                fileOutputStream = new FileOutputStream(this.resourceDirectory + "/" + fileName);
-                outputStream = new ObjectOutputStream(fileOutputStream);
-                outputStream.close();
-                fileOutputStream.close();
-            }catch(Exception e)
-            {
-                System.out.println(e);
-            }
-            return true;
-        }
-        return false;
+        ride.price+=100;
+        return ride;
     }
 
     public Ride GetRide(Ride ride)

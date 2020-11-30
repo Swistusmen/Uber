@@ -19,7 +19,7 @@ public class PersonalData implements Serializable {
         PersonalData that = (PersonalData) o;
         return Float.compare(that.rating, rating) == 0 &&
                 isClient == that.isClient &&
-                wantToSignUp == that.wantToSignUp &&
+
                 Objects.equals(name, that.name) &&
                 Objects.equals(surname, that.surname) &&
                 Objects.equals(accountNumber, that.accountNumber) &&

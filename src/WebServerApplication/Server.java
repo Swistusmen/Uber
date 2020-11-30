@@ -26,18 +26,20 @@ public class Server extends WebServerApplication.ServerCommunicator
             }
             else{
                 System.out.println("Already in base");
-                //PersonalData temp=DB.GetPersonalData(pData);
-                //shouldIDisconnect=(temp==pData?true:false);
+                shouldIDisconnect=DB.checkIfDataAreInDB(pData);
             }
             this.SentConnectionConfirmation(!shouldIDisconnect);
             if(shouldIDisconnect==false) //tested
             {
                 Ride ride=this.LookForRide();
+                DB.AddARide(ride);
                 //proceosowanie
+                ride=DB.UpdateRide(ride);
                 System.out.println(ride.printRide());
-                ride.price+=10;
-                //DB.UpdateRide(ride);
                 this.SentRideUpdate(ride);
+            }
+            else{
+                System.out.println("There is an error with connection to the server");
             }
             this.Disconnect();
         }
