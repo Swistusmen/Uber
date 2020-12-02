@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class DistanceCalculator {
     HashMap<String,Point> cityMap; //maps the city and the coordinates (square 4x4)
 
-    public DistanceCalculator()throws Exception{
+    public DistanceCalculator(){
         cityMap=new HashMap<String,Point>();
         cityMap.put("Debniki",new Point(1,1));
         cityMap.put("Kazimierz",new Point(2,1));

@@ -2,6 +2,8 @@ package WebServerApplication;
 
 import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
+import CommonDataTypes.RideDistance;
+import CommonDataTypes.RideState;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,27 +11,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DataBaseComponent {
-    private String resourceDirectory;
-    private ObjectOutputStream outputStream;
-    private ObjectInputStream inputStream;
-    private FileOutputStream fileOutputStream;
-    private FileInputStream fileInputStream;
-    List<PersonalData> personalData;
-    List<Ride> rides;
+    private List<PersonalData> personalData;
+    private List<Ride> driverRides; //we have only driverRide, because client is immedietally processed, driver my wait
+    private WebServerApplication.DistanceCalculator distanceCalculator;
 
-    DataBaseComponent(String resourceDirectory)
+    DataBaseComponent()
     {
-        this.resourceDirectory=resourceDirectory;
         this.personalData=new LinkedList<PersonalData>();
-        rides=new LinkedList<Ride>();
-    }
-
-    private File CheckIfFileExists(File file)
-    {
-        //File file=new File(this.resourceDirectory+"/"+filePath);
-        if(file.exists())
-            return file;
-        return null;
+        this.driverRides=new ArrayList<Ride>();
+        this.distanceCalculator=new WebServerApplication.DistanceCalculator();
     }
 
     public boolean AddPersonalData(PersonalData pData)
@@ -52,123 +42,43 @@ public class DataBaseComponent {
         return false;
     }
 
-    public PersonalData GetPersonalData(PersonalData pData)
-    {
-        String fileName=pData.getAccountNumber()+".ser";
-        File file=new File(fileName);
-        //File file;
-        //if((file=this.CheckIfFileExists(resourceDirectory+"/"+fileName))!=null)
-        if((file=this.CheckIfFileExists(file))!=null)
-        {
-            try {
-                fileInputStream = new FileInputStream(file);
-                inputStream=new ObjectInputStream(fileInputStream);
-                pData=(PersonalData) inputStream.readObject();
-                fileInputStream.close();
-                inputStream.close();
-                return pData;
-            }catch(Exception e)
-            {
-                System.out.println(e);
-            }
-        }
-        return null;
-    }
-
-    public boolean UpdatePersonalData(PersonalData pData)
-    {
-        String fileName=pData.getAccountNumber()+".ser";
-        File file=new File(fileName);
-        if((file=this.CheckIfFileExists(file))!=null)
-        {
-            try {
-                fileOutputStream = new FileOutputStream(this.resourceDirectory + "/" + fileName);
-                outputStream = new ObjectOutputStream(fileOutputStream);
-                outputStream.close();
-                fileOutputStream.close();
-            }catch(Exception e)
-            {
-                System.out.println(e);
-            }
-            return true;
-        }
-        return false;
-    }
-
     public void AddARide(Ride ride)
     {
-        rides.add(ride);
+        driverRides.add(ride);
     }
 
-    public Ride UpdateRide(Ride ride)
+    public RideDistance getBestFit(Ride ride)
     {
-        ride.price+=100;
-        return ride;
-    }
-
-    public Ride GetRide(Ride ride)
-    {
-        String fileName=ride.inputAddress+"_"+ride.phoneClient+".ser";
-        File file=new File(fileName);
-        if((file=this.CheckIfFileExists(file))!=null)
+        final int noRides=driverRides.size();
+        if(noRides==0)
+            return null;
+        double minimumDistance=10000000.0;
+        int index=0;
+        double currentDistance;
+        for(int i=0;i<noRides;++i)
         {
             try {
-                fileInputStream = new FileInputStream(file);
-                inputStream=new ObjectInputStream(fileInputStream);
-                ride=(Ride) inputStream.readObject();
-                fileInputStream.close();
-                inputStream.close();
-                return ride;
+                if ((currentDistance = this.distanceCalculator.getDistance(ride.inputAddress,
+                        this.driverRides.get(i).inputAddress)) < minimumDistance) {
+                    minimumDistance = currentDistance;
+                    index = i;
+                }
             }catch(Exception e)
             {
                 System.out.println(e);
             }
         }
-        return null;
+    return new RideDistance(this.driverRides.get(index),minimumDistance);
     }
 
-    public Ride DeleteASerializedRide(Ride ride)
+    public RideDistance processClient(Ride ride)
     {
-        String fileName=ride.inputAddress+"_"+ride.phoneClient+".ser";
-        File file=new File(fileName);
-        if((file=this.CheckIfFileExists(file))!=null)
-        {
-            try{
-                fileInputStream = new FileInputStream(file);
-                inputStream=new ObjectInputStream(fileInputStream);
-                ride=(Ride) inputStream.readObject();
-                fileInputStream.close();
-                inputStream.close();
-                file.delete();
-                return ride;
-            }catch (Exception e)
-            {
-                System.out.println(e);
-            }
-        }
-        return null;
-    }
-
-    public PersonalData DeleteASerializedPersonalData(PersonalData pData)
-    {
-        String fileName=pData.getAccountNumber()+".ser";
-        File file=new File(fileName);
-        if((file=this.CheckIfFileExists(file))!=null)
-        {
-            try{
-                fileInputStream = new FileInputStream(file);
-                inputStream=new ObjectInputStream(fileInputStream);
-                pData=(PersonalData) inputStream.readObject();
-                fileInputStream.close();
-                inputStream.close();
-                file.delete();
-                return pData;
-            }catch (Exception e)
-            {
-                System.out.println(e);
-            }
-        }
-        return null;
+        RideDistance driver=getBestFit(ride);
+        ride.carNumber=driver.ride.carNumber;
+        ride.phoneDriver=driver.ride.phoneDriver;
+        ride.state= RideState.Ordered;
+        //TODO as this operation returns data for client only, int the future we will add subscription design pattern to inform driver
+        return new RideDistance(ride,driver.distance);
     }
 
 }

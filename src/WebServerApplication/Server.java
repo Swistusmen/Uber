@@ -2,6 +2,8 @@ package WebServerApplication;
 
 import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
+import CommonDataTypes.RideDistance;
+import CommonDataTypes.TransactionData;
 
 public class Server extends WebServerApplication.ServerCommunicator
 {
@@ -32,9 +34,26 @@ public class Server extends WebServerApplication.ServerCommunicator
             if(shouldIDisconnect==false) //tested
             {
                 Ride ride=this.LookForRide();
-                DB.AddARide(ride);
-                //proceosowanie
-                ride=DB.UpdateRide(ride);
+                if(pData.isClient()==false) {
+                    DB.AddARide(ride);
+                    //from here
+                    System.out.println("I am client");
+                    RideDistance processedRide=DB.processClient(ride);
+                    ride=processedRide.ride;
+                    double cost=-1.0;
+                    TransactionData data=new TransactionData();
+                    try {
+                        cost = costCalculator.getCost(processedRide.distance);
+                        data= moneyOperations.makeAnOperation(cost, processedRide.distance);
+                    }catch(Exception e){
+                        System.out.println(e);
+                    }
+                    ride.price=data.Sum();
+                    //to here- new features- not tested
+                }
+                else {
+                    System.out.println("I am driver");
+                }
                 System.out.println(ride.printRide());
                 this.SentRideUpdate(ride);
             }
@@ -46,11 +65,16 @@ public class Server extends WebServerApplication.ServerCommunicator
     }
 
     private WebServerApplication.DataBaseComponent DB;
+    private WebServerApplication.CostCalculator costCalculator;
+    private WebServerApplication.MoneyOperations moneyOperations;
 
     Server(String clientIP, int portNumber)
     {
         super(clientIP, portNumber);
-        DB=new WebServerApplication.DataBaseComponent("WebServerApplication");
+        DB=new WebServerApplication.DataBaseComponent();
+        costCalculator=new WebServerApplication.CostCalculator(1.5,0.4);
+        moneyOperations=new WebServerApplication.MoneyOperations(0.5,23,0.1);
+
     }
 
 }

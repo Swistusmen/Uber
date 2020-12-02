@@ -9,7 +9,7 @@ public class Ride implements Serializable {
     public String phoneDriver;
     public String phoneClient;
     public RideState state= RideState.Unordered;
-    public float price;
+    public double price;
 
     public String printRide()
     {
@@ -21,7 +21,7 @@ public class Ride implements Serializable {
         return  carNumber;
     }
 
-    public float getPrice(){
+    public double getPrice(){
         return price;
     }
 
