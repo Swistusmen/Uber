@@ -2,6 +2,6 @@ package ClientMobileApplication;
 import CommonDataTypes.Ride;
 
 public interface ClientOperations {
-   Ride LookForADrive();
-   void ReserveADrive();
+   //public Ride OrderRide(Ride orderRide); will be more methods which use Run(), this will be standard ordeing method
+   //void ReserveADrive();
 }

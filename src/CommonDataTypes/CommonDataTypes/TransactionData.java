@@ -24,6 +24,7 @@ public class TransactionData {
 
     public double Sum()
     {
-        return this.TotalCost+this.DriverIncome+this.Tax+this.AppIncome;
+        double result=this.TotalCost+this.DriverIncome+this.Tax+this.AppIncome;
+        return result;
     }
 }

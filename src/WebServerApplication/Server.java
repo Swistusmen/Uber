@@ -28,13 +28,13 @@ public class Server extends WebServerApplication.ServerCommunicator
             }
             else{
                 System.out.println("Already in base");
-                shouldIDisconnect=DB.checkIfDataAreInDB(pData);
+                shouldIDisconnect=!DB.checkIfDataAreInDB(pData);
             }
             this.SentConnectionConfirmation(!shouldIDisconnect);
             if(shouldIDisconnect==false) //tested
             {
                 Ride ride=this.LookForRide();
-                if(pData.isClient()==false) {
+                if(pData.isClient()==true) {
                     DB.AddARide(ride);
                     //from here
                     System.out.println("I am client");
@@ -48,6 +48,7 @@ public class Server extends WebServerApplication.ServerCommunicator
                     }catch(Exception e){
                         System.out.println(e);
                     }
+                    System.out.println(data.Sum());
                     ride.price=data.Sum();
                     //to here- new features- not tested
                 }

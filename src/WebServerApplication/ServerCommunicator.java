@@ -64,7 +64,6 @@ public abstract class ServerCommunicator {
             try{
                 System.out.println("Disconnection");
                 serializationStream.writeObject(null);
-
                 deserializationStream.close();
                 serializationStream.close();
                 server.close();

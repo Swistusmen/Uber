@@ -9,21 +9,55 @@ import CommonDataTypes.DriverData;
 import java.util.Scanner;
 
 public class DriverMobileApplication extends MobileAppCommunicator {
-    private Scanner scanner;
-
     public static void main(String[] args){
-
         DriverMobileApplication app=new DriverMobileApplication(args[0],45678);
-        app.Run();
+        PersonalData personalData=this.LandingMenu();
+        while(personalData!=null)
+        {
+            final int numberOfOperations=Options.size();
+            for(String s:Options){
+                System.out.println(s);
+            }
+            int choice=scanner.nextInt();
+            switch(choice){
+                case 1:{
+                    Ride ride=super.CreateRide(true);
+                    app.Run(personalData,ride);
+                }break;
+                case 2:{
+                    break;
+                }break;
+                 else{
+                    break;
+                }break;
+            }
+        }
     }
-
+    //variables
+    private Scanner scanner;
+    List<String> Options;
+    //busines logic methods
     public DriverMobileApplication(String IP, int portNumber){
         super(IP, portNumber);
         scanner=new Scanner(System.in);
     }
 
-    public void Run(){
+    public void Run(PersonalData personalData, Ride ride){
+        this.InserPersonalData(driverData);
+        boolean isConnectionSetUp=this.ConnectWithServer(driverData);
+        if(isConnectionSetUp==true)
+        {
+            ride=this.OperateOnRide(ride);
+            System.out.println(ride);
+            ride.price+=30;
+            ride=this.OperateOnRide(ride);
+            System.out.println(ride);
+            this.Disconnect();
+        }
+    }
 
+    public PersonalData testPersonalData()
+    {
         DriverData driverData=new DriverData();
         driverData.setName("Rafał");
         driverData.setSurname("Widziszewski");
@@ -35,27 +69,18 @@ public class DriverMobileApplication extends MobileAppCommunicator {
 
         driverData.setCarLicenseID("673A2");
         driverData.setLicenseID("51627");
+        return driverData;
+    }
 
-
-        this.InserPersonalData(driverData);
-        boolean isConnectionSetUp=this.ConnectWithServer(driverData);
-        if(isConnectionSetUp==true)
-        {
-            Ride ride=new Ride();
-            ride.price=100;
-            ride.phoneClient=driverData.getTelephoneNumber();
-            ride.state= RideState.Unordered;
-            ride.inputAddress="Czarnowiejska";
-            ride.outputAddress="Miodowa";
-            ride=this.OperateOnRide(ride);
-            System.out.println(ride);
-            ride.price+=30;
-            ride=this.OperateOnRide(ride);
-            System.out.println(ride);
-            this.Disconnect();
-        }
-
-
+    public Ride testRide()
+    {
+        Ride ride=new Ride();
+        ride.price=100;
+        ride.phoneClient="1234567";
+        ride.state= RideState.Unordered;
+        ride.inputAddress="Czarnowiejska";
+        ride.outputAddress="Miodowa";
+        return ride;
     }
 
 }

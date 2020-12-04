@@ -12,24 +12,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Scanner;
 
-public abstract class MobileAppCommunicator {
-
-        /*
-public class MobileAppCommunicator {
-    public static void main(String[] args) {
-
-        Ride currentRide=new Ride();
-        currentRide.state= RideState.Unordered;
-        currentRide.price=100;
-        currentRide.inputAddress="Czarnowiejska";
-        MobileAppCommunicator app= new MobileAppCommunicator ();//("192.168.0.143",1800);
-        currentRide=app.Run("192.168.0.143",1800,currentRide);
-        System.out.println(currentRide.printRide());
-
-         */
-    //}
-
-
+public abstract class MobileAppCommunicator implements  Operations{
     private ServerSocket sender=null;
     private Socket listener=null;
     private Socket client=null;
@@ -108,6 +91,7 @@ public class MobileAppCommunicator {
         return ride;
     }
 
+    //CRITICAL
     protected boolean ConnectWithServer( PersonalData pData)
     {
         boolean isConnectionSetUp=false;
@@ -218,57 +202,60 @@ public class MobileAppCommunicator {
         return ride;
     }
 
-    /*
-    public MobileAppCommunicator(){
-
-    }
-    */
-
-/*
-    public MobileAppCommunicator(String IP, int portNumber)
+    @Override
+    public Ride CreateRide(boolean isClient)
     {
-        try {
-            client = new Socket(IP, portNumber); //setting up socket which response for sending messages
-
-            sender=new ServerSocket(portNumber);
-            listener=sender.accept(); //setting up socket which responds for receivinng messages
-
-            inputStream = new DataInputStream(listener.getInputStream());
-            outputStream = new DataOutputStream(client.getOutputStream());
-            System.out.println("Connection has been set up");
-        }catch(Exception e)
-        {
-            System.out.println(e);
+        Ride currentRide=new Ride();
+        Scanner scanner = new Scanner(System.in);
+        currentRide.state= RideState.Unordered;
+        System.out.print("Please enter your current location: ");
+        currentRide.inputAddress=scanner.nextLine();
+        System.out.print("Please enter your phone number: ");
+        if(isClient) {
+            currentRide.phoneDriver = scanner.nextLine();
+            System.out.print("Please enter your destination: ");
+            currentRide.outputAddress = scanner.nextLine();
         }
-        skaner=new Scanner(System.in);
-        try{
-            String line="";
-            while (!line.equals("Over"))
+        else {
+            currentRide.phoneClient = scanner.nextLine();
+            System.out.print("Please enter your car number: ");
+            currentRide.carNumber = scanner.nextLine();
+        }
+        return currentRide;
+    }
+
+    @Override
+    public PersonalData SignUp(boolean isClient)
+    {
+        PersonalData client=new PersonalData();
+        client.setName(scanner.nextLine());
+        client.setSurname(scanner.nextLine());
+        client.setAccountNumber(scanner.nextLine());
+        client.setClient(isClient);
+        client.setRating(0.0f);
+        client.setTelephoneNumber(scanner.nextLine());
+        client.setWantToSignUp(true);
+        return client;
+    }
+
+    public PersonalData LandingMenu()
+    {
+        System.out.println("1.Sign up");
+        System.out.println("2.Sign in");
+        System.out.println("3.Exit");
+        int switcher=scanner.nextInt();
+        switch(switcher){
+            case 1:
             {
-                System.out.print(": ");
-                line=skaner.nextLine();
-
-                outputStream.writeUTF(line);
-                outputStream.flush();
-
-                line=inputStream.readUTF();
-                System.out.println(line);
-
-            }}catch (Exception e)
-        {
-            System.out.println(e);
-        }
-        try{
-            inputStream.close();
-            outputStream.close();
-            client.close();
-            sender.close();
-            listener.close();
-        }catch(Exception e)
-        {
-            System.out.println(e);
+                return SignUp(true);
+            }break;
+            case 2:{
+                return null;
+            }break;
+            case 3:{
+                return null;
+            }break;
         }
     }
-    */
 
 }
