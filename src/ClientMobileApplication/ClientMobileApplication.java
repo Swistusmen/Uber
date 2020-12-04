@@ -5,48 +5,46 @@ import CommonDataTypes.Ride;
 import CommonDataTypes.RideState;
 import MobileApplication.MobileAppCommunicator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ClientMobileApplication extends MobileAppCommunicator implements ClientOperations
 {
     public static void main(String[] args) {
         ClientMobileApplication app=new ClientMobileApplication(args[0],45676);
-        PersonalData personalData=this.LandingMenu();
+        PersonalData personalData=app.LandingMenu();
          while(personalData!=null)
          {
-             final int numberOfOperations=Options.size();
-             for(String s:Options){
+             final int numberOfOperations=app.Options.size();
+             for(String s:app.Options){
                  System.out.println(s);
              }
-             int choice=scanner.nextInt();
+             int choice=app.scanner.nextInt();
              switch(choice){
-                 case 1:{
-                     Ride ride=super.CreateRide(true);
+                 case 0:{
+                     Ride ride=app.CreateARide(true,personalData.getTelephoneNumber());
                      app.Run(personalData,ride);
+                     personalData.setWantToSignUp(false);
                  }break;
-                 case 2:{
-                     break;
-                 }break;
-                 else{
-                     break;
-                 }break;
+                 case 1:{
+                     return;
+                 }
              }
          }
     }
     //variables
-    private Scanner scanner;
-    List<String> Options;
+    public List<String> Options;
 
     //busines logic methods
     public ClientMobileApplication(String IP, int portNumber) {
         super(IP, portNumber);
-        scanner=new Scanner(System.in);
-        Options=new ArrayList<String>(){
-            "1.Order a ride","2.Exit"
-        };
+        Options=new ArrayList<String>(2);
+        Options.add("0.Order a ride");
+        Options.add("1.Exit");
     }
 
-    public void Run(PersonalData personalData, Ride ride)
+    public Ride Run(PersonalData personalData, Ride ride)
     {
         this.InserPersonalData(personalData);
         boolean isConnectionSetUp=this.ConnectWithServer(personalData);
@@ -59,6 +57,7 @@ public class ClientMobileApplication extends MobileAppCommunicator implements Cl
             System.out.println(ride);
             this.Disconnect();
         }
+        return ride;
     }
     //test data
     public PersonalData testData()
