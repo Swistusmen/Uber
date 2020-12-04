@@ -9,14 +9,14 @@ public class DistanceCalculator {
     public DistanceCalculator(){
         cityMap=new HashMap<String,Point>();
         cityMap.put("Debniki",new Point(1,1));
-        cityMap.put("Kazimierz",new Point(2,1));
-        cityMap.put("Zablocie",new Point(3,1));
-        cityMap.put("Blonia",new Point(1,2));
-        cityMap.put("Wawel",new Point(2,2));
-        cityMap.put("Grzegorzki",new Point(3,2));
-        cityMap.put("AGH",new Point(1,2));
-        cityMap.put("Kleparz",new Point(2,2));
-        cityMap.put("Teatr Slowackiego",new Point(3,2));
+        cityMap.put("Kazimierz",new Point(20,10));
+        cityMap.put("Zablocie",new Point(17,3));
+        cityMap.put("Blonia",new Point(9,5));
+        cityMap.put("Wawel",new Point(11,6));
+        cityMap.put("Grzegorzki",new Point(2,15));
+        cityMap.put("AGH",new Point(8,8));
+        cityMap.put("Kleparz",new Point(12,2));
+        cityMap.put("Teatr Slowackiego",new Point(10,10));
     }
 
     public double getDistance(String currentPosition, String destinationPosition) throws Exception

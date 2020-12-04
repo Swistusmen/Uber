@@ -6,45 +6,48 @@ import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
 import CommonDataTypes.RideState;
 import CommonDataTypes.DriverData;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class DriverMobileApplication extends MobileAppCommunicator {
     public static void main(String[] args){
         DriverMobileApplication app=new DriverMobileApplication(args[0],45678);
-        PersonalData personalData=this.LandingMenu();
+        PersonalData personalData=app.LandingMenu();
         while(personalData!=null)
         {
-            final int numberOfOperations=Options.size();
-            for(String s:Options){
+            final int numberOfOperations=app.Options.size();
+            for(String s:app.Options){
                 System.out.println(s);
             }
-            int choice=scanner.nextInt();
+            int choice=app.scanner.nextInt();
             switch(choice){
-                case 1:{
-                    Ride ride=super.CreateRide(true);
+                case 0:{
+                    Ride ride=app.CreateARide(true,personalData.getTelephoneNumber());
                     app.Run(personalData,ride);
                 }break;
-                case 2:{
+                case 1:{
                     break;
-                }break;
-                 else{
-                    break;
-                }break;
+                }
             }
         }
     }
     //variables
-    private Scanner scanner;
-    List<String> Options;
+    public List<String> Options;
+
     //busines logic methods
     public DriverMobileApplication(String IP, int portNumber){
         super(IP, portNumber);
-        scanner=new Scanner(System.in);
+
+        Options=new ArrayList<String>(2);
+        Options.add("0.Order a ride");
+        Options.add("1.Exit");
     }
 
-    public void Run(PersonalData personalData, Ride ride){
-        this.InserPersonalData(driverData);
-        boolean isConnectionSetUp=this.ConnectWithServer(driverData);
+    public Ride Run(PersonalData personalData, Ride ride){
+        this.InserPersonalData(personalData);
+        boolean isConnectionSetUp=this.ConnectWithServer(personalData);
         if(isConnectionSetUp==true)
         {
             ride=this.OperateOnRide(ride);
@@ -54,6 +57,7 @@ public class DriverMobileApplication extends MobileAppCommunicator {
             System.out.println(ride);
             this.Disconnect();
         }
+        return ride;
     }
 
     public PersonalData testPersonalData()

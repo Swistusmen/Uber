@@ -18,7 +18,7 @@ public abstract class MobileAppCommunicator implements  Operations{
     private Socket client=null;
     private DataInputStream inputStream =null;
     private DataOutputStream outputStream=null;
-    private Scanner skaner= null;
+    public Scanner scanner= null;
     private ObjectOutputStream serializationStream;
     private ObjectInputStream deserializationStream;
     private String resourcePath="MobileAppResources";
@@ -52,7 +52,7 @@ public abstract class MobileAppCommunicator implements  Operations{
         return false;
     }
 
-    protected PersonalData LoadPersonalData(String phoneNumber)
+    protected PersonalData LoadPersonalData(String phoneNumber) //will be used in case of signin- data are on device
     {
         PersonalData pData=null;
         try{
@@ -153,71 +153,24 @@ public abstract class MobileAppCommunicator implements  Operations{
     {
         this.IP=IP;
         this.portNumber=portNumber;
-    }
-
-
-    public Ride Run(String IP, int portNumber, Ride rideObject)
-    {
-        Ride ride=null;
-        try{
-            client = new Socket(IP, portNumber); //setting up socket which response for sending messages
-
-            sender=new ServerSocket(portNumber);
-            listener=sender.accept(); //setting up socket which responds for receivinng messages
-            System.out.println("Hello");
-            try {
-                //TODO here, the order matters, different order causes, program cannot set connection
-                serializationStream =new ObjectOutputStream(client.getOutputStream());
-                deserializationStream = new ObjectInputStream(listener.getInputStream());
-            }catch(Exception e)
-            {
-                System.out.println("Error with serialization streams, "+e);
-            }
-            System.out.println("Connection has been set up");
-        }catch(Exception e)
-        {
-            System.out.println(e);
-        }
-        try{
-            System.out.println(rideObject.printRide());
-            serializationStream.writeObject(rideObject);
-            serializationStream.flush();
-            System.out.println("Send object");
-
-            ride=(Ride) deserializationStream.readObject();
-        }catch(Exception e)
-        {
-            System.out.println(e);
-        }
-        try{
-            inputStream.close();
-            outputStream.close();
-            client.close();
-            sender.close();
-            listener.close();
-        }catch(Exception e)
-        {
-            System.out.println(e);
-        }
-        return ride;
+        this.scanner=new Scanner(System.in);
     }
 
     @Override
-    public Ride CreateRide(boolean isClient)
+    public Ride CreateARide(boolean isClient, String phonNumber)
     {
         Ride currentRide=new Ride();
         Scanner scanner = new Scanner(System.in);
         currentRide.state= RideState.Unordered;
         System.out.print("Please enter your current location: ");
         currentRide.inputAddress=scanner.nextLine();
-        System.out.print("Please enter your phone number: ");
         if(isClient) {
-            currentRide.phoneDriver = scanner.nextLine();
+            currentRide.phoneDriver = phonNumber;
             System.out.print("Please enter your destination: ");
             currentRide.outputAddress = scanner.nextLine();
         }
         else {
-            currentRide.phoneClient = scanner.nextLine();
+            currentRide.phoneClient = phonNumber;
             System.out.print("Please enter your car number: ");
             currentRide.carNumber = scanner.nextLine();
         }
@@ -228,11 +181,15 @@ public abstract class MobileAppCommunicator implements  Operations{
     public PersonalData SignUp(boolean isClient)
     {
         PersonalData client=new PersonalData();
+        System.out.print("Name: ");
         client.setName(scanner.nextLine());
+        System.out.print("Surname: ");
         client.setSurname(scanner.nextLine());
+        System.out.print("Account number: ");
         client.setAccountNumber(scanner.nextLine());
         client.setClient(isClient);
         client.setRating(0.0f);
+        System.out.print("Phone number: ");
         client.setTelephoneNumber(scanner.nextLine());
         client.setWantToSignUp(true);
         return client;
@@ -240,22 +197,23 @@ public abstract class MobileAppCommunicator implements  Operations{
 
     public PersonalData LandingMenu()
     {
-        System.out.println("1.Sign up");
-        System.out.println("2.Sign in");
-        System.out.println("3.Exit");
+        System.out.println("0.Sign up");
+        System.out.println("1.Sign in");
+        System.out.println("2.Exit");
         int switcher=scanner.nextInt();
         switch(switcher){
-            case 1:
+            case 0:
             {
                 return SignUp(true);
-            }break;
+            }
+            case 1:{
+                return null;
+            }
             case 2:{
                 return null;
-            }break;
-            case 3:{
-                return null;
-            }break;
+            }
         }
+        return null;
     }
 
 }
