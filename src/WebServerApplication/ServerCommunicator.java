@@ -6,6 +6,8 @@ import CommonDataTypes.Ride;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -20,26 +22,65 @@ public abstract class ServerCommunicator {
         private ObjectInputStream deserializationStream;
         private String clientIP;
         private int portNumber;
+        private List<Integer> ports;
 
-        public ServerCommunicator()
+        protected int AssignPort()
         {
+            int port=0;
+            for(int i: this.ports){
+                if(i>0){
+                    port=i;
+                    i*=-1;
+                    return port;
+                }
+            }
+            return -1;
+        }
 
+        protected int JoinClientsToTheSystem(int portN)
+        {
+            int port=-1;
+            try{
+                sender=new Socket(this.clientIP,portN);
+                outputStream=new DataOutputStream(sender.getOutputStream());
+                port=AssignPort();
+                outputStream.writeInt(port);
+                outputStream.close();
+                sender.close();
+            }catch(Exception e)
+            {}
+            return port;
+        }
+
+        protected int ConnectClients(){
+            int port=-1;
+            while(port==-1){
+                port=JoinClientsToTheSystem(portNumber);
+                if(port!=-1)
+                    break;
+            }
+            return port;
         }
 
         public ServerCommunicator (String clientIP,int portNumber)
         {
             this.clientIP=clientIP;
             this.portNumber=portNumber;
+            this.ports=new ArrayList<Integer>();
+            for(int i=456001;i<456041;i+=2)
+            {
+                ports.add(i);
+            }
         }
 
-        protected PersonalData LookForConnection()
+        protected PersonalData LookForConnection(int port)
         {
             PersonalData data=null;
             try{
-                server = new ServerSocket(portNumber);
+                server = new ServerSocket(port);
                 listener = server.accept(); //start to listen and do it until connection will be set up
 
-                sender = new Socket(this.clientIP, this.portNumber+1);//start sending messages
+                sender = new Socket(this.clientIP, port+1);//start sending messages
                 System.out.println("Connection has been set up");
                 deserializationStream = new ObjectInputStream(listener.getInputStream());
                 serializationStream = new ObjectOutputStream(sender.getOutputStream());

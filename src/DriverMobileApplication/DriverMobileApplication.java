@@ -13,7 +13,9 @@ import java.util.Scanner;
 
 public class DriverMobileApplication extends MobileAppCommunicator {
     public static void main(String[] args){
-        DriverMobileApplication app=new DriverMobileApplication(args[0],45678);
+        System.out.println("Welcome in Uber Application!");
+        System.out.println("Please wait for connection");
+        DriverMobileApplication app=new DriverMobileApplication(args[0],45600);
         PersonalData personalData=app.LandingMenu();
         while(personalData!=null)
         {
