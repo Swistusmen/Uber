@@ -8,7 +8,7 @@ import CommonDataTypes.TransactionData;
 public class Server extends WebServerApplication.ServerCommunicator
 {
     public static void main(String[] args) {
-        Server server=new Server(args[0],45676);
+        Server server=new Server(args[0],45600);
         server.Run();
     }
 
@@ -16,9 +16,10 @@ public class Server extends WebServerApplication.ServerCommunicator
     {
         while(true)
         {
+            int port=ConnectClients();
             PersonalData pData=null;
             while(pData==null) {
-                pData = this.LookForConnection();
+                pData = this.LookForConnection(port);
             }
             boolean shouldIDisconnect=true;
             if(pData.isWantToSignUp()==true) //tested

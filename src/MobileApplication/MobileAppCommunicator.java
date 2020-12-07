@@ -52,6 +52,23 @@ public abstract class MobileAppCommunicator implements  Operations{
         return false;
     }
 
+    protected int JoinToTheSystem(int portNumber)
+    {
+        int port=-1;
+        while(port==-1) {
+            try {
+                sender=new ServerSocket(portNumber);
+                client = sender.accept();
+                inputStream = new DataInputStream(System.in);
+                port = inputStream.readInt();
+                client.close();
+                inputStream.close();
+            } catch (Exception e) {
+            }
+        }
+        return port;
+    }
+
     protected PersonalData LoadPersonalData(String phoneNumber) //will be used in case of signin- data are on device
     {
         PersonalData pData=null;
@@ -151,8 +168,9 @@ public abstract class MobileAppCommunicator implements  Operations{
 
     public MobileAppCommunicator(String IP, int portNumber)
     {
+        int port=this.JoinToTheSystem(portNumber);
         this.IP=IP;
-        this.portNumber=portNumber;
+        this.portNumber=port;
         this.scanner=new Scanner(System.in);
     }
 

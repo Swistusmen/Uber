@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class ClientMobileApplication extends MobileAppCommunicator implements ClientOperations
 {
     public static void main(String[] args) {
-        ClientMobileApplication app=new ClientMobileApplication(args[0],45676);
+        ClientMobileApplication app=new ClientMobileApplication(args[0],45600);
         PersonalData personalData=app.LandingMenu();
          while(personalData!=null)
          {
