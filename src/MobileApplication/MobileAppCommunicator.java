@@ -57,12 +57,18 @@ public abstract class MobileAppCommunicator implements  Operations{
         int port=-1;
         while(port==-1) {
             try {
-                sender=new ServerSocket(portNumber);
-                client = sender.accept();
-                inputStream = new DataInputStream(client.getInputSystem());
+                System.out.println(this.IP);
+                System.out.println(portNumber);
+                client=new Socket(this.IP,portNumber);
+                System.out.println("Socket");
+                inputStream = new DataInputStream(client.getInputStream());
+                System.out.println("Input");
                 port = inputStream.readInt();
                 client.close();
                 inputStream.close();
+                sender.close();
+                System.out.println("Przydzielony port: "+port);
+
             } catch (Exception e) {
             }
         }
@@ -168,8 +174,8 @@ public abstract class MobileAppCommunicator implements  Operations{
 
     public MobileAppCommunicator(String IP, int portNumber)
     {
-        int port=this.JoinToTheSystem(portNumber);
         this.IP=IP;
+        int port=this.JoinToTheSystem(portNumber);
         this.portNumber=port;
         this.scanner=new Scanner(System.in);
     }
