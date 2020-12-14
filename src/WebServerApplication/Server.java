@@ -1,9 +1,6 @@
 package WebServerApplication;
 
-import CommonDataTypes.PersonalData;
-import CommonDataTypes.Ride;
-import CommonDataTypes.RideDistance;
-import CommonDataTypes.TransactionData;
+import CommonDataTypes.*;
 
 public class Server extends WebServerApplication.ServerCommunicator
 {
@@ -14,9 +11,9 @@ public class Server extends WebServerApplication.ServerCommunicator
 
     public void Run()
     {
+        int port=-1;
         while(true)
         {
-            int port=-1;
             while(port==-1) {
                 port = ConnectClients();
             }
@@ -39,10 +36,16 @@ public class Server extends WebServerApplication.ServerCommunicator
             {
                 Ride ride=this.LookForRide();
                 if(pData.isClient()==true) {
-                    DB.AddARide(ride);
+                    //was ok, now need to be changed for look for ride
                     //from here
                     System.out.println("I am client");
-                    RideDistance processedRide=DB.processClient(ride);
+                    RideDistance processedRide=DB.processClient(ride,pData);
+                    if(processedRide==null){
+                        Disconnect();
+                        System.out.println("No driver is available");
+                        port=-1;
+                        continue;
+                    }
                     ride=processedRide.ride;
                     double cost=-1.0;
                     TransactionData data=new TransactionData();
@@ -58,6 +61,9 @@ public class Server extends WebServerApplication.ServerCommunicator
                 }
                 else {
                     System.out.println("I am driver");
+                    if(pData==null)
+                        System.out.println("Null");
+                    DB.CreateTicket(ride, pData,port);
                 }
                 System.out.println(ride.printRide());
                 this.SentRideUpdate(ride);
@@ -66,6 +72,8 @@ public class Server extends WebServerApplication.ServerCommunicator
                 System.out.println("There is an error with connection to the server");
             }
             this.Disconnect();
+            System.out.println();
+            port=DB.checkIfAnyTicketWasUpdated(); //implement farther operations- connecting driver
         }
     }
 

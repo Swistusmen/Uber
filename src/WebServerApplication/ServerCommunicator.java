@@ -43,7 +43,7 @@ public abstract class ServerCommunicator {
             int port=-1;
             try{
 
-                System.out.println(portN);
+                System.out.println("na porcie: "+portN);
                  server=new ServerSocket(portN);
                  server.setSoTimeout(10*1000); //TODO this doesn't work as expected under ubuntu
                  System.out.println("ServerSocket");
