@@ -4,8 +4,10 @@ import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.http.WebSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -22,42 +24,84 @@ public abstract class ServerCommunicator {
         private ObjectInputStream deserializationStream;
         private String clientIP;
         private int portNumber;
-        private List<Integer> ports;
+        private List<Integer> availablePorts;
+        private List<Integer> busyPorts;
 
         protected int AssignPort()
         {
-            int port=0;
-            for(int i: this.ports){
-                if(i>0){
-                    port=i;
-                    i*=-1;
-                    return port;
-                }
-            }
-            return -1;
+            int size=this.availablePorts.size();
+            if(size==0)
+                return -1;
+            int port=this.availablePorts.get(0);
+            this.busyPorts.add(port);
+            this.availablePorts.remove(0);
+            return port;
         }
 
         protected int JoinClientsToTheSystem(int portN)
         {
             int port=-1;
             try{
-                sender=new Socket(this.clientIP,portN);
+
+                System.out.println(portN);
+                 server=new ServerSocket(portN);
+                 server.setSoTimeout(10*1000); //TODO this doesn't work as expected under ubuntu
+                 System.out.println("ServerSocket");
+                 try {
+                     sender = server.accept();
+                 }catch(Exception e){
+                     return -1;
+                 }
+                System.out.println("Socket");
                 outputStream=new DataOutputStream(sender.getOutputStream());
+                System.out.println("Output");
                 port=AssignPort();
+                System.out.println("Przydzielony port "+port);
                 outputStream.writeInt(port);
                 outputStream.close();
+                server.close();
                 sender.close();
+
+        /* This need to be modified- thread which have 5 sceonds to connect or it disconnects
+                port=AssignPort();
+                p=port;
+                System.out.println("A");
+                System.out.println(p);
+                WebServerApplication.MutableInt a=new WebServerApplication.MutableInt();
+                a.setVal(port);
+                Thread listener=new Thread(new WebServerApplication.PortListener(portN,a));
+                port=a.getVal();
+                System.out.println("Po 0 sekundach");
+                listener.start();
+                listener.join(2000);
+                System.out.println(port);
+                //wait(5000);
+        */
+                System.out.println("Po 1 sekundzie");
             }catch(Exception e)
-            {}
+            {
+                return port;
+            }
             return port;
         }
 
         protected int ConnectClients(){
             int port=-1;
-            while(port==-1){
-                port=JoinClientsToTheSystem(portNumber);
-                if(port!=-1)
-                    break;
+            if(-1!=(port=JoinClientsToTheSystem(portNumber))) {
+                System.out.println(port);
+                return port;
+            }
+            if(this.busyPorts.size()==0) {
+                System.out.println("Pusto");
+                return -1;
+            }
+            for(int i: this.busyPorts)
+            {
+                if(i<0)
+                {
+                    if(-1!=(port=JoinClientsToTheSystem(i)))
+                        return port;
+                }
             }
             return port;
         }
@@ -66,11 +110,12 @@ public abstract class ServerCommunicator {
         {
             this.clientIP=clientIP;
             this.portNumber=portNumber;
-            this.ports=new ArrayList<Integer>();
-            for(int i=456001;i<456041;i+=2)
+            this.availablePorts=new ArrayList<Integer>();
+            for(int i=45601;i<45641;i+=2)
             {
-                ports.add(i);
+                availablePorts.add(i);
             }
+            this.busyPorts=new ArrayList<Integer>();
         }
 
         protected PersonalData LookForConnection(int port)

@@ -59,7 +59,7 @@ public abstract class MobileAppCommunicator implements  Operations{
             try {
                 sender=new ServerSocket(portNumber);
                 client = sender.accept();
-                inputStream = new DataInputStream(System.in);
+                inputStream = new DataInputStream(client.getInputSystem());
                 port = inputStream.readInt();
                 client.close();
                 inputStream.close();

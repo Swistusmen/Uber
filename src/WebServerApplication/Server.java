@@ -16,7 +16,10 @@ public class Server extends WebServerApplication.ServerCommunicator
     {
         while(true)
         {
-            int port=ConnectClients();
+            int port=-1;
+            while(port==-1) {
+                port = ConnectClients();
+            }
             PersonalData pData=null;
             while(pData==null) {
                 pData = this.LookForConnection(port);
