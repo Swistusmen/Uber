@@ -2,6 +2,7 @@ package WebServerApplication;
 
 import CommonDataTypes.PersonalData;
 import CommonDataTypes.Ride;
+import CommonDataTypes.RideState;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -9,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.http.WebSocket;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -42,7 +44,7 @@ public abstract class ServerCommunicator {
         {
             int port=-1;
             try{
-
+                /*
                 System.out.println("na porcie: "+portN);
                  server=new ServerSocket(portN);
                  server.setSoTimeout(10*1000); //TODO this doesn't work as expected under ubuntu
@@ -61,25 +63,27 @@ public abstract class ServerCommunicator {
                 outputStream.close();
                 server.close();
                 sender.close();
-
-        /* This need to be modified- thread which have 5 sceonds to connect or it disconnects
-                port=AssignPort();
-                p=port;
-                System.out.println("A");
-                System.out.println(p);
-                WebServerApplication.MutableInt a=new WebServerApplication.MutableInt();
-                a.setVal(port);
-                Thread listener=new Thread(new WebServerApplication.PortListener(portN,a));
-                port=a.getVal();
-                System.out.println("Po 0 sekundach");
-                listener.start();
-                listener.join(2000);
+                */
+                int porcik=AssignPort();
+                System.out.println("porcik "+porcik );
+                port=porcik;
+                WebServerApplication.PortHandler portHandler=new WebServerApplication.PortHandler(port,portN);
+                Thread thread=new Thread(portHandler);
+                thread.start();
+                Thread.sleep(10000);
+                thread.interrupt();
+                port=portHandler.portToAssign;
                 System.out.println(port);
-                //wait(5000);
-        */
-                System.out.println("Po 1 sekundzie");
+                if(port==porcik) {
+                    availablePorts.add(port);
+                    busyPorts.remove((Object)(port));
+                    return -1;
+                }
+                port=porcik;
+                System.out.println(busyPorts.size());
             }catch(Exception e)
             {
+                System.out.println(e);
                 return port;
             }
             return port;
@@ -110,17 +114,17 @@ public abstract class ServerCommunicator {
         {
             this.clientIP=clientIP;
             this.portNumber=portNumber;
-            this.availablePorts=new ArrayList<Integer>();
+            this.availablePorts=new LinkedList<Integer>();
             for(int i=45601;i<45641;i+=2)
             {
                 availablePorts.add(i);
             }
-            this.busyPorts=new ArrayList<Integer>();
+            this.busyPorts=new LinkedList<Integer>();
         }
 
-        protected PersonalData LookForConnection(int port)
+        protected Object LookForConnection(int port)
         {
-            PersonalData data=null;
+            Object data=null;
             try{
                 server = new ServerSocket(port);
                 listener = server.accept(); //start to listen and do it until connection will be set up
@@ -135,8 +139,8 @@ public abstract class ServerCommunicator {
                 //System.out.println(e);
             }
             try{
-                data=(PersonalData) deserializationStream.readObject();
-
+                //data=(PersonalData) deserializationStream.readObject();
+                data=deserializationStream.readObject();
                 System.out.println("Message has been received");
             }catch (Exception e)
             {
