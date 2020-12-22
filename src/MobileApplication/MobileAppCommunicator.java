@@ -64,12 +64,12 @@ public abstract class MobileAppCommunicator implements  Operations{
                 inputStream = new DataInputStream(client.getInputStream());
                 System.out.println("Input");
                 port = inputStream.readInt();
+                System.out.println("Przydzielony port: "+port);
                 client.close();
                 inputStream.close();
-                sender.close();
-                System.out.println("Przydzielony port: "+port);
 
             } catch (Exception e) {
+                System.out.println(e);
             }
         }
         return port;
@@ -88,6 +88,31 @@ public abstract class MobileAppCommunicator implements  Operations{
             System.out.println(e);
         }
         return pData;
+    }
+
+    protected void SentRide(Ride ride)
+    {
+        try{
+            System.out.println("Sending a ride object");
+            serializationStream.flush();
+            serializationStream.writeObject(ride);
+            serializationStream.flush();
+            System.out.println("Sent");
+        }catch (Exception e){
+
+        }
+    }
+
+    protected Ride ReadRide()
+    {
+        Ride ride=null;
+        try{
+            ride = (Ride) deserializationStream.readObject();
+            System.out.println(ride.printRide());
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return ride;
     }
 
     protected Ride OperateOnRide(Ride ride)
@@ -127,7 +152,7 @@ public abstract class MobileAppCommunicator implements  Operations{
             listener=sender.accept(); //setting up socket which responds for receivinng messages
             System.out.println("Connection has been set up");
             try {
-                //TODO here, the order matters, different order causes, program cannot set connection
+                //here, the order matters, different order causes, program cannot set connection
                 serializationStream =new ObjectOutputStream(client.getOutputStream());
                 serializationStream.flush();
                 deserializationStream = new ObjectInputStream(listener.getInputStream());
@@ -145,7 +170,7 @@ public abstract class MobileAppCommunicator implements  Operations{
             System.out.println("Sending initial data");
             serializationStream.flush();
             System.out.println("waiting for boolean");
-            deserializationStream.readChar(); //TODO this one is very strange, communication is broken without it
+            deserializationStream.readChar(); //this one is very strange, communication is broken without it
             isConnectionSetUp=(boolean)deserializationStream.readBoolean();
             System.out.println("Got confirmation");
         }catch (Exception e)
@@ -154,6 +179,20 @@ public abstract class MobileAppCommunicator implements  Operations{
         }
         System.out.println("Koniec connect with server");
         return isConnectionSetUp;
+    }
+
+    protected void WaitForConnection()
+    {
+        try{
+            sender=new ServerSocket(this.portNumber);
+            listener=sender.accept();
+            client=new Socket(this.IP,this.portNumber+1);
+            deserializationStream=new ObjectInputStream(listener.getInputStream());
+            serializationStream=new ObjectOutputStream(client.getOutputStream());
+            serializationStream.flush();
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
 
     protected void Disconnect()
@@ -185,7 +224,7 @@ public abstract class MobileAppCommunicator implements  Operations{
     {
         Ride currentRide=new Ride();
         Scanner scanner = new Scanner(System.in);
-        currentRide.state= RideState.Unordered;
+        currentRide.state= RideState.Ordered;
         System.out.print("Please enter your current location: ");
         currentRide.inputAddress=scanner.nextLine();
         if(isClient) {
@@ -219,7 +258,7 @@ public abstract class MobileAppCommunicator implements  Operations{
         return client;
     }
 
-    public PersonalData LandingMenu()
+    public PersonalData LandingMenu(boolean isClient)
     {
         System.out.println("0.Sign up");
         System.out.println("1.Sign in");
@@ -228,7 +267,7 @@ public abstract class MobileAppCommunicator implements  Operations{
         switch(switcher){
             case 0:
             {
-                return SignUp(true);
+                return SignUp(isClient);
             }
             case 1:{
                 return null;
