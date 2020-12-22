@@ -52,29 +52,41 @@ public class DataBaseComponent {
         a.driverData=driver;
         driverRides.add(a);
         observers.add(observer);
-
+        System.out.println("Liczba kierowcow: "+driverRides.size());
     }
 
-    private void processTicket(int index, Ride ride,PersonalData pData)
+    public void processTicket(int index, Ride ride,PersonalData pData)
     {
-        System.out.println("Update");
+        if(pData==null)
+            index=getIndex(index); //index is a port in these case
         switch (ride.state){
             case Ordered:{
                 this.driverRides.get(index).ride.state=Ordered;
+                this.driverRides.get(index).ride.inputAddress=ride.inputAddress;
                 this.driverRides.get(index).ride.outputAddress=ride.outputAddress;
                 this.driverRides.get(index).ride.phoneClient=ride.phoneClient;
                 this.driverRides.get(index).clientData=pData;
                 this.driverRides.get(index).observer.setUpdate(Ordered);
-                System.out.println("Update");
             }break;
             case Finished: case Canceled:{
                 this.driverRides.get(index).ride.state=Unordered;
+                this.driverRides.get(index).ride.inputAddress=ride.outputAddress;
                 this.driverRides.get(index).ride.outputAddress=null;
                 this.driverRides.get(index).ride.phoneClient=null;
                 this.driverRides.get(index).clientData=null;
                 this.driverRides.get(index).observer.unsetUpdate();
             }break;
         }
+    }
+
+    private int getIndex(int port)
+    {
+        final int a=this.driverRides.size();
+        for(int i=0;i<a;i++){
+            if(this.driverRides.get(i).port==port)
+                return i;
+        }
+        return -1;
     }
 
     public RideDistance getBestFit(Ride ride,PersonalData pData)
@@ -85,6 +97,7 @@ public class DataBaseComponent {
         double minimumDistance=10000000000000000000000000000000.0;
         int index=-1;
         double currentDistance;
+        System.out.println("no Drivers: "+noRides);
         for(int i=0;i<noRides;++i)
         {
             try {

@@ -1,6 +1,7 @@
 package WebServerApplication;
 
 import CommonDataTypes.PersonalData;
+import CommonDataTypes.PersonalPort;
 import CommonDataTypes.Ride;
 import CommonDataTypes.RideState;
 
@@ -27,7 +28,7 @@ public abstract class ServerCommunicator {
         private String clientIP;
         private int portNumber;
         private List<Integer> availablePorts;
-        private List<Integer> busyPorts;
+        protected List<Integer> busyPorts;
 
         protected int AssignPort()
         {
@@ -44,43 +45,21 @@ public abstract class ServerCommunicator {
         {
             int port=-1;
             try{
-                /*
-                System.out.println("na porcie: "+portN);
-                 server=new ServerSocket(portN);
-                 server.setSoTimeout(10*1000); //TODO this doesn't work as expected under ubuntu
-                 System.out.println("ServerSocket");
-                 try {
-                     sender = server.accept();
-                 }catch(Exception e){
-                     return -1;
-                 }
-                System.out.println("Socket");
-                outputStream=new DataOutputStream(sender.getOutputStream());
-                System.out.println("Output");
-                port=AssignPort();
-                System.out.println("Przydzielony port "+port);
-                outputStream.writeInt(port);
-                outputStream.close();
-                server.close();
-                sender.close();
-                */
+                System.out.println("Join Clinets to the system");
                 int porcik=AssignPort();
-                System.out.println("porcik "+porcik );
                 port=porcik;
                 WebServerApplication.PortHandler portHandler=new WebServerApplication.PortHandler(port,portN);
                 Thread thread=new Thread(portHandler);
                 thread.start();
-                Thread.sleep(10000);
-                thread.interrupt();
+                thread.join(20000);
                 port=portHandler.portToAssign;
-                System.out.println(port);
                 if(port==porcik) {
                     availablePorts.add(port);
                     busyPorts.remove((Object)(port));
                     return -1;
                 }
+                System.out.println("Przydzielony "+porcik);
                 port=porcik;
-                System.out.println(busyPorts.size());
             }catch(Exception e)
             {
                 System.out.println(e);
@@ -92,20 +71,8 @@ public abstract class ServerCommunicator {
         protected int ConnectClients(){
             int port=-1;
             if(-1!=(port=JoinClientsToTheSystem(portNumber))) {
-                System.out.println(port);
+                System.out.println("Docelowy port: "+port);
                 return port;
-            }
-            if(this.busyPorts.size()==0) {
-                System.out.println("Pusto");
-                return -1;
-            }
-            for(int i: this.busyPorts)
-            {
-                if(i<0)
-                {
-                    if(-1!=(port=JoinClientsToTheSystem(i)))
-                        return port;
-                }
             }
             return port;
         }
@@ -122,31 +89,60 @@ public abstract class ServerCommunicator {
             this.busyPorts=new LinkedList<Integer>();
         }
 
-        protected Object LookForConnection(int port)
+        protected PersonalPort LookForConnection(ArrayList<Integer> ports) //przyjmowanie do 4 portow
         {
-            Object data=null;
-            try{
-                server = new ServerSocket(port);
-                listener = server.accept(); //start to listen and do it until connection will be set up
+            PersonalPort p=new PersonalPort();
+            try {
+                int size=ports.size();
+                ArrayList<WebServerApplication.PortListener> listeners=new ArrayList<WebServerApplication.PortListener>();
+                ArrayList<Thread> threads=new ArrayList<Thread>();
+                for(int i=0;i<size;i++)
+                {
+                    System.out.println("Port: "+ports.get(i));
+                    listeners.add( new WebServerApplication.PortListener(ports.get(i), this.clientIP));
+                    threads.add(new Thread(listeners.get(i)));
+                    threads.get(i).start();
+                }
+                for(int i=0;i<size;i++)
+                {
+                    threads.get(i).join(10000);
+                }
+                int index=-1;
+                for(int i=0;i<size;i++)
+                {
+                    if(listeners.get(i).deserializationStream!=null)
+                    {
+                        index=i;
+                        break;
+                    }
+                }
+                if(index!=-1)
+                {
+                    deserializationStream= listeners.get(index).deserializationStream;
+                    serializationStream= listeners.get(index).serializationStream;
+                    server= listeners.get(index).server;
+                    sender= listeners.get(index).sender;
+                    listener= listeners.get(index).listener;
+                    p.pData = (PersonalData)deserializationStream.readObject();
+                    p.port=index;
+                }
+            }catch (Exception e){};
 
-                sender = new Socket(this.clientIP, port+1);//start sending messages
-                System.out.println("Connection has been set up");
-                deserializationStream = new ObjectInputStream(listener.getInputStream());
-                serializationStream = new ObjectOutputStream(sender.getOutputStream());
-                serializationStream.flush();
-            }catch (Exception e)
-            {
-                //System.out.println(e);
-            }
+            return p;
+        }
+
+        protected void SetUpConnection(int port)
+        {
             try{
-                //data=(PersonalData) deserializationStream.readObject();
-                data=deserializationStream.readObject();
-                System.out.println("Message has been received");
-            }catch (Exception e)
-            {
-                //System.out.println(e);
+                this.sender=new Socket(this.clientIP, port);
+                this.server= new ServerSocket(port+1);
+                this.listener=server.accept();
+                serializationStream=new ObjectOutputStream(sender.getOutputStream());
+                serializationStream.flush();
+                deserializationStream=new ObjectInputStream(listener.getInputStream());
+            }catch(Exception e){
+                System.out.println(e);
             }
-            return data;
         }
 
         protected void Disconnect()
@@ -207,7 +203,6 @@ public abstract class ServerCommunicator {
                 System.out.println(ride.printRide());
 
                 serializationStream.writeObject(ride);
-
 
                 System.out.println("Wrote a ride");
             }catch(Exception e)

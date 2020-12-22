@@ -2,6 +2,8 @@ package WebServerApplication;
 
 import CommonDataTypes.*;
 
+import java.util.ArrayList;
+
 public class Server extends WebServerApplication.ServerCommunicator
 {
     public static void main(String[] args) {
@@ -12,18 +14,40 @@ public class Server extends WebServerApplication.ServerCommunicator
     public void Run() {
         ServerAction serverAction = ServerAction.LISTEN;
         int port = -1;
+        Ride ride=null;
         while (true) {
-            if(port!=-1)
-                serverAction=ServerAction.SING;
+            serverAction=(port!=-1) ?ServerAction.SING:ServerAction.LISTEN;
             switch (serverAction) {
                 case LISTEN: {
-                    while (port == -1) {
-                        port = ConnectClients();
-                    }
                     PersonalData pData = null;
-                    pData = loginToTheSystem(pData, port);
+                    while(true) {
+                        port = ConnectClients();
+                        final int noPorts = this.busyPorts.size();
+                        for (int i = 0; i < noPorts; ) {
+                            System.out.println("Port z ktorym sie lacze: "+this.busyPorts.get(i));
+                            ArrayList<Integer> ports=new ArrayList<Integer>();
+                            for(int c=0;i<noPorts&&c<8;c++,i++){
+                                ports.add(busyPorts.get(i));
+                            }
+                            PersonalPort pPort=null;
+                            pPort=loginToTheSystem(pPort, ports);
+                            if(pPort==null)
+                                continue;
+                            pData=pPort.pData;
+                            port=pPort.port;
+                            if(pData!=null) {
+                                System.out.println("Rozne od null");
+                                break;
+                            }
+                        }
+                        if(pData!=null) {
+                            System.out.println("Rozne od null");
+                            break;
+                        }
+                    }
+
                     if (pData != null) {
-                        Ride ride = this.LookForRide();
+                        ride = this.LookForRide();
                         if (pData.isClient() == true) {
                             RideDistance processedRide = DB.processClient(ride, pData);
                             if (processedRide == null) {
@@ -32,22 +56,23 @@ public class Server extends WebServerApplication.ServerCommunicator
                                 continue;
                             }
                             ride = operateOnClientMoney(processedRide);
+                            this.SentRideUpdate(ride);
                         } else {
                             System.out.println("I am driver");
                             DB.CreateTicket(ride, pData, port);
                         }
-                        this.SentRideUpdate(ride);
                     }
                     this.Disconnect();
                 }break;
                 case SING: {
-                    //connect
-                    //przetworz dane
-                    //this.SentRideUpdate(ride);
-                }
-                System.out.println();
-                port = DB.checkIfAnyTicketWasUpdated(); //implement farther operations- connecting driver
+                    this.SetUpConnection(port);
+                    this.SentRideUpdate(ride);
+                    ride=this.LookForRide();
+                    DB.processTicket(port,ride,null);
+                }break;
             }
+            port = DB.checkIfAnyTicketWasUpdated();
+            System.out.println("Port: "+port);
         }
     }
 
@@ -64,26 +89,20 @@ public class Server extends WebServerApplication.ServerCommunicator
 
     }
 
-    private Ride sentMessage(Ride ride,int port)
+    private PersonalPort loginToTheSystem(PersonalPort pData,ArrayList<Integer> ports)
     {
-
-        return null;
-    }
-
-    private PersonalData loginToTheSystem(PersonalData pData,int port)
-    {
-        while(pData==null) {
-            pData = (PersonalData) this.LookForConnection(port);
-        }
+        pData = this.LookForConnection(ports);
+        if(pData.pData==null)
+            return null;
         boolean shouldIDisconnect=true;
-        if(pData.isWantToSignUp()==true) //tested
+        if(pData.pData.isWantToSignUp()==true) //tested
         {
             System.out.println("Want to sign up");
-            shouldIDisconnect=DB.AddPersonalData(pData);
+            shouldIDisconnect=DB.AddPersonalData(pData.pData);
         }
         else{
             System.out.println("Already in base");
-            shouldIDisconnect=!DB.checkIfDataAreInDB(pData);
+            shouldIDisconnect=!DB.checkIfDataAreInDB(pData.pData);
         }
         this.SentConnectionConfirmation(!shouldIDisconnect);
         if(shouldIDisconnect==false)

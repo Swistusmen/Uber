@@ -1,47 +1,40 @@
 package WebServerApplication;
 
+
 import java.io.DataOutputStream;
-import java.io.OutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class PortListener implements Runnable{
-    public WebServerApplication.MutableInt portToAssign;
-    public ServerSocket server;
-    public Socket sender;
-    public int portN;
-    public DataOutputStream outputStream;
-    int port;
+    public int port;
+    public String IP;
+    public ServerSocket server=null;
+    public Socket listener=null;
+    public Socket sender=null;
+    public ObjectOutputStream serializationStream=null;
+    public ObjectInputStream deserializationStream=null;
 
-    public PortListener(int portN, WebServerApplication.MutableInt portToAssign )
-    {
-        this.portN=portN;
-        this.portToAssign=portToAssign;
+    public PortListener(int portToAssign, String IP){
+        this.port=portToAssign;
+        this.IP=IP;
     }
 
     @Override
     public void run() {
-        try {
-            port=666;
-            portToAssign.setVal(666);
-            server = new ServerSocket(portN);
-            try {
-                sender = server.accept();
-            } catch (Exception e) {
-                port= -1;
-            }
-            System.out.println("Socket");
-            outputStream = new DataOutputStream(sender.getOutputStream());
-            System.out.println("Output");
-            //port = portToAssign;
-            port=666;
-            System.out.println("Przydzielony port " + port);
-            outputStream.writeInt(port);
-            outputStream.close();
-            server.close();
-            sender.close();
-        }catch (Exception e){
-            //portToAssign=-1;
+        try{
+            server = new ServerSocket(port);
+            listener = server.accept(); //start to listen and do it until connection will be set up
+
+            sender = new Socket(this.IP, port+1);//start sending messages
+            System.out.println("Connection has been set up");
+            deserializationStream = new ObjectInputStream(listener.getInputStream());
+            serializationStream = new ObjectOutputStream(sender.getOutputStream());
+            serializationStream.flush();
+        }catch (Exception e)
+        {
+
         }
     }
 }

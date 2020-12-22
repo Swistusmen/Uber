@@ -26,22 +26,4 @@ double app_tax=0.2,cancel_tax=0.5;
         data.Tax=data.AppIncome*taxInPercent/100+data.DriverIncome*taxInPercent/500;
         return data;
     }
-
-    /*
-    public void GetClientMoney(Ride ride) throws Exception {
-        PriceCalculator price = new PriceCalculator(ride);
-        this.client_outcome=price.getPrice();
-    }
-
-    public void SendClientMoneyBack(Ride ride) throws Exception {
-        PriceCalculator price = new PriceCalculator(ride);
-        this.client_outcome=(1-cancel_tax)*price.getPrice();
-    }
-
-    public void SendDriverMoney(Ride ride) throws Exception {
-        PriceCalculator price = new PriceCalculator(ride);
-        this.driver_income=(1-app_tax)* price.getPrice();
-    }
-
-    */
 }
