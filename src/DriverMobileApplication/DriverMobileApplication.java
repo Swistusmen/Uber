@@ -16,7 +16,8 @@ public class DriverMobileApplication extends MobileAppCommunicator {
         System.out.println("Welcome in Uber Application!");
         System.out.println("Please wait for connection");
         DriverMobileApplication app=new DriverMobileApplication(args[0],45600);
-        PersonalData personalData=app.LandingMenu();
+        PersonalData personalData=app.LandingMenu(false);
+        Ride ride=null;
         while(personalData!=null)
         {
             final int numberOfOperations=app.Options.size();
@@ -26,11 +27,13 @@ public class DriverMobileApplication extends MobileAppCommunicator {
             int choice=app.scanner.nextInt();
             switch(choice){
                 case 0:{
-                    Ride ride=app.CreateARide(true,personalData.getTelephoneNumber());
-                    app.Run(personalData,ride);
+                    if(ride==null) {
+                        ride = app.CreateARide(false, personalData.getTelephoneNumber());
+                    }
+                    ride=app.Run(personalData,ride);
                 }break;
                 case 1:{
-                    break;
+                    return;
                 }
             }
         }
@@ -52,13 +55,17 @@ public class DriverMobileApplication extends MobileAppCommunicator {
         boolean isConnectionSetUp=this.ConnectWithServer(personalData);
         if(isConnectionSetUp==true)
         {
-            ride=this.OperateOnRide(ride);
-            System.out.println(ride);
-            ride.price+=30;
-            ride=this.OperateOnRide(ride);
-            System.out.println(ride);
+            SentRide(ride);
             this.Disconnect();
+            this.WaitForConnection();
+            ride=this.ReadRide();
+            try {
+                Thread.sleep(10000);
+            }catch(Exception e){};
+            ride.state=RideState.Finished;
+            this.SentRide(ride);
         }
+        ride.inputAddress=ride.outputAddress;
         return ride;
     }
 

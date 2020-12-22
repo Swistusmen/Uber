@@ -9,31 +9,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ClientMobileApplication extends MobileAppCommunicator implements ClientOperations
+public class ClientMobileApplication extends MobileAppCommunicator
 {
     public static void main(String[] args) {
         ClientMobileApplication app=new ClientMobileApplication(args[0],45600);
-        PersonalData personalData=app.LandingMenu();
-         while(personalData!=null)
-         {
-             final int numberOfOperations=app.Options.size();
-             for(String s:app.Options){
-                 System.out.println(s);
-             }
-             int choice=app.scanner.nextInt();
-             switch(choice){
-                 case 0:{
-                     Ride ride=app.CreateARide(true,personalData.getTelephoneNumber());
-                     app.Run(personalData,ride);
-                     personalData.setWantToSignUp(false);
-                 }break;
-                 case 1:{
-                     return;
-                 }
-             }
-         }
+        PersonalData personalData=app.LandingMenu(true);
+        while(personalData!=null)
+        {
+            final int numberOfOperations=app.Options.size();
+            for(String s:app.Options){
+                System.out.println(s);
+            }
+            int choice=app.scanner.nextInt();
+            switch(choice){
+                case 0:{
+                    Ride ride=app.CreateARide(true,personalData.getTelephoneNumber());
+                    app.Run(personalData,ride);
+                    personalData.setWantToSignUp(false);
+                }break;
+                case 1:{
+                    return;
+                }
+            }
+        }
     }
-    //variables
     public List<String> Options;
 
     //busines logic methods
@@ -51,9 +50,8 @@ public class ClientMobileApplication extends MobileAppCommunicator implements Cl
         System.out.println(isConnectionSetUp);
         if(isConnectionSetUp==true)
         {
-            System.out.println(ride);
-            ride.price+=30;
-            ride=this.OperateOnRide(ride);
+            this.SentRide(ride);
+            ride=this.ReadRide();
             System.out.println(ride);
             this.Disconnect();
         }
