@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="335.0" prefWidth="304.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUIClient.ControllerSignUp">
+   <top>
+      <HBox prefHeight="44.0" prefWidth="304.0" BorderPane.alignment="CENTER">
+         <children>
+            <Separator orientation="VERTICAL" prefHeight="100.0" prefWidth="31.0" />
+            <Label fx:id="userData" prefHeight="38.0" prefWidth="250.0" text="Enter your personal data..." textAlignment="CENTER">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+            <Separator orientation="VERTICAL" prefHeight="44.0" prefWidth="16.0" />
+         </children>
+      </HBox>
+   </top>
+   <bottom>
+      <HBox prefHeight="37.0" prefWidth="304.0" BorderPane.alignment="CENTER">
+         <children>
+            <Separator prefHeight="26.0" prefWidth="100.0" />
+            <Button mnemonicParsing="false" onAction="#confirmSignUp" prefHeight="26.0" prefWidth="107.0" text="Sign Up" />
+            <Separator prefHeight="26.0" prefWidth="104.0" />
+         </children>
+      </HBox>
+   </bottom>
+   <center>
+      <VBox prefHeight="276.0" prefWidth="304.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox prefHeight="228.0" prefWidth="304.0">
+               <children>
+                  <Separator prefHeight="66.0" prefWidth="20.0" />
+                  <VBox prefHeight="101.0" prefWidth="263.0">
+                     <children>
+                        <TextField fx:id="nameBar" prefHeight="40.0" prefWidth="261.0" promptText="Name.." />
+                        <Separator prefHeight="21.0" prefWidth="263.0" />
+                        <TextField fx:id="surnameBar" prefHeight="40.0" prefWidth="261.0" promptText="Surname.." />
+                        <Separator prefHeight="21.0" prefWidth="263.0" />
+                        <TextField fx:id="accountBar" prefHeight="41.0" prefWidth="263.0" promptText="Account Number..." />
+                        <Separator prefHeight="18.0" prefWidth="263.0" />
+                        <TextField fx:id="phonenumberBar" prefHeight="45.0" prefWidth="263.0" promptText="Phone number.." />
+                     </children>
+                  </VBox>
+                  <Separator prefHeight="72.0" prefWidth="20.0" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
