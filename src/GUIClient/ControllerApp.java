@@ -30,13 +30,20 @@ public class ControllerApp implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        InputAdressLabel.setText("InAdress");
-        OutputAdressLabel.setText("OutAdress");
-        CarNumberLabel.setText("CarNumber");
+        /*InputAdressLabel.setText(A.ride.inputAddress.);
+        OutputAdressLabel.setText(A.ride.outputAddress);
+        CarNumberLabel.setText(A.ride.carNumber);
         PriceLabel.setText("Price");
-        PhoneLabel.setText("Phone");
-    }
+        PhoneLabel.setText(A.ride.phoneDriver);*/
+        String input="AAA";
 
+        InputAdressLabel.setText(input);
+        OutputAdressLabel.setText("A");
+        CarNumberLabel.setText("A");
+        PriceLabel.setText("Price");
+        PhoneLabel.setText("A");
+
+    }
 
      public void confirmRideButton(ActionEvent event) throws IOException, InterruptedException {
          //Loading ride gui

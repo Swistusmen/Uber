@@ -37,7 +37,7 @@ public class ControllerLocDes implements Initializable {
         if (locationBar.getText().length() > 0 && destinationBar.getText().length() > 0) {
             DistanceCalculator distanceCalculator = new DistanceCalculator();
             CostCalculator costCalculator = new CostCalculator(10, 3);
-            double cost = costCalculator.getCost(distanceCalculator.getDistance(location, destination));
+            //double cost = costCalculator.getCost(distanceCalculator.getDistance(location, destination));
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("DriverApp.fxml"));
             Parent root = loader.load();

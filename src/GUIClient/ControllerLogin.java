@@ -32,15 +32,17 @@ public class ControllerLogin implements Initializable {
 
 
 
-     public void signUp(ActionEvent event) throws IOException{
+     public int signUp(ActionEvent event) throws IOException{
         //Loading new scene
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ClientSignUp.fxml"));
         Parent root = loader.load();
-
         Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
         window.setTitle("Sign Up");
         window.setScene(new Scene(root, 300, 380));
          window.show();
+
+         return 0;
     }
 
     public void signIn(ActionEvent event) throws IOException{

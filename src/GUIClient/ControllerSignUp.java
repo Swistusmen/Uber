@@ -53,6 +53,11 @@ public class ControllerSignUp implements Initializable {
             phonenumberBar.setPromptText("Please enter your phone number!");
         }
 
+        A.Name=name;
+        A.Surname=surname;
+        A.Phone=phonenumber;
+        A.Account=account;
+
         if (nameBar.getText().length() > 0 && surnameBar.getText().length() > 0 && accountBar.getText().length() > 0 && phonenumberBar.getText().length() > 0) {
             //Money operations?
             //Szukanie ride i drivera?
@@ -63,11 +68,11 @@ public class ControllerSignUp implements Initializable {
             Parent root = loader.load();
 
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            A.Connect();
             window.setTitle("Order a Ride");
             window.setScene(new Scene(root, 200, 200));
             window.show();
         }
-
     }
 
 

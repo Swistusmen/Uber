@@ -11,6 +11,9 @@ import java.util.Scanner;
 
 public class ClientMobileApplication extends MobileAppCommunicator
 {
+    PersonalData client;
+    Ride ridee;
+
     public static void main(String[] args) {
         ClientMobileApplication app=new ClientMobileApplication(args[0],45600);
         PersonalData personalData=app.LandingMenu(true);
@@ -37,6 +40,14 @@ public class ClientMobileApplication extends MobileAppCommunicator
 
     //busines logic methods
     public ClientMobileApplication(String IP, int portNumber) {
+        super(IP, portNumber);
+        Options=new ArrayList<String>(2);
+        Options.add("0.Order a ride");
+        Options.add("1.Exit");
+    }
+
+    public ClientMobileApplication(String IP,int portNumber, int c)
+    {
         super(IP, portNumber);
         Options=new ArrayList<String>(2);
         Options.add("0.Order a ride");
@@ -80,5 +91,40 @@ public class ClientMobileApplication extends MobileAppCommunicator
         ride.inputAddress="Czarnowiejska";
         ride.outputAddress="Miodowa";
         return ride;
+    }
+
+    public void OrderARide(String Current, String destination)
+    {
+        ridee=new Ride();
+        ridee.inputAddress=Current;
+        ridee.outputAddress=destination;
+        ridee.state=RideState.Unordered;
+        ridee.phoneClient=client.getTelephoneNumber();
+        ridee.printRide();
+    }
+
+    public void SignUp(String name, String surname, String account, String phone)
+    {
+        client=new PersonalData();
+        client.setName(name);
+        client.setSurname(surname);
+        client.setAccountNumber(account);
+        client.setTelephoneNumber(phone);
+        client.setWantToSignUp(true);
+    }
+
+    public Ride Run()
+    {
+        boolean isConnectionSetUp=this.ConnectWithServer(client);
+        System.out.println("Connected");
+        System.out.println(isConnectionSetUp);
+        if(isConnectionSetUp==true)
+        {
+            this.SentRide(ridee);
+            ridee=this.ReadRide();
+            System.out.println(ridee);
+            this.Disconnect();
+        }
+        return ridee;
     }
 }
