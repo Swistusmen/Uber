@@ -107,6 +107,7 @@ public abstract class MobileAppCommunicator implements  Operations{
     {
         Ride ride=null;
         try{
+            System.out.println("Reading Object");
             ride = (Ride) deserializationStream.readObject();
             System.out.println(ride.printRide());
         }catch(Exception e){

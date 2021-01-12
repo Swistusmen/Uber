@@ -39,15 +39,20 @@ public class ControllerLocDes implements Initializable {
             destinationBar.setPromptText("Please choose your destination!");
         }
 
+        A.CurrentLocation=location;
+        A.Destination=destination;
+
         if (locationBar.getText().length() > 0 && destinationBar.getText().length() > 0) {
-            DistanceCalculator distanceCalculator = new DistanceCalculator();
-            CostCalculator costCalculator = new CostCalculator(10, 3);
-            double cost = costCalculator.getCost(distanceCalculator.getDistance(location, destination));
+            //DistanceCalculator distanceCalculator = new DistanceCalculator();
+            //CostCalculator costCalculator = new CostCalculator(10, 3);
+            //double cost = costCalculator.getCost(distanceCalculator.getDistance(location, destination));
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ClientApp.fxml"));
             Parent root = loader.load();
+            A.OrderARide();
 
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            //polaczenie, zwrocony obiekt Ride
             window.setTitle("Confirm Ride");
             window.setScene(new Scene(root, 310, 400));
             window.show();
